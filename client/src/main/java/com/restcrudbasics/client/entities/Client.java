@@ -11,7 +11,7 @@ public class Client implements Serializable {
 	private String cpf;
 	private Double income;
 	private Instant birthDate;
-	private Integer chldren;
+	private Integer children;
 	
 	public Client() {
 	}
@@ -22,7 +22,7 @@ public class Client implements Serializable {
 		this.cpf = cpf;
 		this.income = income;
 		this.birthDate = birthDate;
-		this.chldren = chldren;
+		this.children = chldren;
 	}
 
 	public Long getId() {
@@ -66,11 +66,11 @@ public class Client implements Serializable {
 	}
 
 	public Integer getChldren() {
-		return chldren;
+		return children;
 	}
 
 	public void setChldren(Integer chldren) {
-		this.chldren = chldren;
+		this.children = chldren;
 	}
 
 	@Override
