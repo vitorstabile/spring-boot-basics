@@ -75,11 +75,11 @@ public class Client implements Serializable {
 		this.birthDate = birthDate;
 	}
 
-	public Integer getChldren() {
+	public Integer getChildren() {
 		return children;
 	}
 
-	public void setChldren(Integer chldren) {
+	public void setChildren(Integer chldren) {
 		this.children = chldren;
 	}
 
