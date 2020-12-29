@@ -3,9 +3,19 @@ package com.restcrudbasics.client.entities;
 import java.io.Serializable;
 import java.time.Instant;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+@Entity
+@Table(name= "tb_category") //table name in the database
 public class Client implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
+	@Id // the primary key of the table will be the attribute id from the client
+	@GeneratedValue(strategy = GenerationType.IDENTITY) // auto increment id (primary key)
 	private Long id;
 	private String name;
 	private String cpf;
