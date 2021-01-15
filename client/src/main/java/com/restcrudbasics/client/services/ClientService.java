@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.restcrudbasics.client.dto.ClientDTO;
 import com.restcrudbasics.client.repositories.ClientRepository;
+import com.restcrudbasics.client.services.exceptions.EntityNotFoundException;
 import com.restcrudbasics.client.entities.Client;
 
 @Service // this annotation will register the class ClientService as a dependency injection component and will be management by spring
@@ -27,7 +28,7 @@ public class ClientService {
 	@Transactional(readOnly = true)
 	public ClientDTO findById(Long id) {
 		Optional<Client> obj = repository.findById(id);
-		Client entity = obj.get();
+		Client entity = obj.orElseThrow(() -> new EntityNotFoundException("Entity not found"));
 		return new ClientDTO(entity);
 	}
 
