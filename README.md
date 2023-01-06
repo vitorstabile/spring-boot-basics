@@ -37,9 +37,40 @@ Spring Boot consists of the Spring Framework and Embedded Servers. Because it us
 
 <br>
 
+- Advantages of Spring Boot
+  - Autoconfiguration
+  - An opinionated approach to configuration
+  - The ability to create standalone applications
+  - Creates stand-alone Spring applications that only need to be started using Java -jar
+  - Provides features for production such as health checks and externalized configuration
+  - Provides a CLI tool for developing and testing your application
+  - Rapidly increases productivity
+  - Reduces development time
+  - Easy to learn and build spring applications
+
+**Autoconfiguration**
+
+Autoconfiguration means that applications are initialized with pre-set dependencies that you don't have to configure manually. As Java Spring Boot comes with built-in autoconfiguration capabilities, it automatically configures both the underlying Spring Framework and third-party packages based on your settings (and based on best practices, which helps avoid errors). Even though you can override these defaults once the initialization is complete, Java Spring Boot's autoconfiguration feature enables you to start developing your Spring-based applications fast and reduces the possibility of human errors.
+
+**Opinionated approach**
+
+Spring Boot uses an opinionated approach to adding and configuring starter dependencies, based on the needs of your project. Following its own judgment, Spring Boot chooses which packages to install and which default values to use, rather than requiring you to make all those decisions yourself and set up everything manually.
+
+You can define the needs of your project during the initialization process, during which you choose among multiple starter dependencies—called Spring Starters—that cover typical use cases. You run Spring Boot Initializr by filling out a simple web form, without any coding.
+
+For example, the ‘Spring Web’ starter dependency allows you to build Spring-based web applications with minimal configuration by adding all the necessary dependencies—such as the Apache Tomcat web server—to your project. ‘Spring Security’ is another popular starter dependency that automatically adds authentication and access-control features to your application.
+
+Spring Boot includes over 50 Spring Starters, and many more third-party starters are available.
+
+**Standalone applications**
+
+Spring Boot helps developers create applications that just run. Specifically, it lets you create standalone applications that run on their own, without relying on an external web server, by embedding a web server such as Tomcat or Netty into your app during the initialization process. As a result, you can launch your application on any platform by simply hitting the Run command. (You can opt out of this feature to build applications without an embedded Web server.)
+
 #### <a name="chapter1part3"></a>Chapter 1 - Part 3: Spring Boot vs Spring?
 
+Again, the biggest advantages of using Spring Boot versus Spring Framework alone are ease of use and faster development. In theory, this comes at the expense of the greater flexibility you get from working directly with Spring Framework.
 
+But, in practice, unless you need or want to implement a very unique configuration, using Spring Booth is worth the tradeoff. You still are able to use Spring Framework’s very popular annotation system that lets you easily inject extra dependencies (not covered by Spring Starters) into your application. And, you still get access to all Spring Framework features, including easy event handling, validation, data binding, type conversion, and built-in security and testing capabilities. Bottom line, if your project’s scope is covered by even just one Spring Starter, Spring Boot can significantly streamline development.
 
 ## <a name="chapter2"></a>Chapter 2: B
   
