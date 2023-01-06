@@ -6,10 +6,10 @@
     - [Chapter 1 - Part 1: What is Spring Framework?](#chapter1part1)
     - [Chapter 1 - Part 2: What is Spring Boot?](#chapter1part1)
     - [Chapter 1 - Part 3: Spring Boot vs Spring](#chapter1part2)
-2. [Chapter 2: B](#chapter2)
-    - [Chapter 2 - Part 1: Ba](#chapter2part1)
-    - [Chapter 2 - Part 2: Bb](#chapter2part2)
-    - [Chapter 2 - Part 3: Bc](#chapter2part3)
+2. [Chapter 2: Knowing Spring Boot](#chapter2)
+    - [Chapter 2 - Part 1: Framework Architecture](#chapter2part1)
+    - [Chapter 2 - Part 2: Starting Spring Boot](#chapter2part2)
+    - [Chapter 2 - Part 3: First Project](#chapter2part3)
 
 ## <a name="chapter1"></a>Chapter 1: Introducing Spring Boot
   
@@ -72,10 +72,10 @@ Again, the biggest advantages of using Spring Boot versus Spring Framework alone
 
 But, in practice, unless you need or want to implement a very unique configuration, using Spring Booth is worth the tradeoff. You still are able to use Spring Framework’s very popular annotation system that lets you easily inject extra dependencies (not covered by Spring Starters) into your application. And, you still get access to all Spring Framework features, including easy event handling, validation, data binding, type conversion, and built-in security and testing capabilities. Bottom line, if your project’s scope is covered by even just one Spring Starter, Spring Boot can significantly streamline development.
 
-## <a name="chapter2"></a>Chapter 2: B
+## <a name="chapter2"></a>Chapter 2: Knowing Spring Boot
   
-#### <a name="chapter2part1"></a>Chapter 2 - Part 1: Ba
+#### <a name="chapter2part1"></a>Chapter 2 - Part 1: Framework Architecture
 
-#### <a name="chapter2part2"></a>Chapter 2 - Part 2: Bb
+#### <a name="chapter2part2"></a>Chapter 2 - Part 2: Starting Spring Boot
 
-#### <a name="chapter2part3"></a>Chapter 2 - Part 3: Bc
+#### <a name="chapter2part3"></a>Chapter 2 - Part 3: First Project
