@@ -98,6 +98,65 @@ In the new concept, we have Spring Boot in full control providing the web server
 
 <br>
 
+The Spring Framework contains a lot of features, which are well-organized in about twenty modules. These modules can be grouped together based on their primary features into Core Container, Data Access/Integration, Web, AOP (Aspect Oriented Programming), Instrumentation and Test. These groups are shown in the diagram below.
+
+<br>
+
+<div align="center"><img src="img/spring_framework_modules-w577-h446.png" width=577 height=466><br><sub>Fig 4 - Spring Framework Modules - (<a href='[https://docs.spring.io/spring-framework/docs/3.0.0.M4/reference/html/ch01s02.html](https://docs.spring.io/spring-framework/docs/3.0.0.M4/reference/html/ch01s02.html)'>Work by Spring Docs</a>) </sub></div>
+
+<br>
+
+For more information, acess this (link)[https://docs.spring.io/spring-framework/docs/3.0.0.M4/reference/html/ch01s02.html]
+
+Spring boot architecture is a module in the spring framework, where application with minimal programming efforts can be developed and is of production-grade and even be stand-alone in nature.
+
+Using spring boot there is no complex XML configuration and it makes easier for developers in getting started with the application. 
+
+<br>
+
+<div align="center"><img src="img/spring_boot_architecture-w898-h482.png" width=898 height=482><br><sub>Fig 5 - Spring Boot Architecture - (<a href='[https://www.educba.com/spring-boot-architecture/](https://www.educba.com/spring-boot-architecture/)'>Work by Educba</a>) </sub></div>
+
+<br>
+
+Also, one thing which needs to be kept in mind is that the configuration of a spring boot application is developed using annotation. Annotation is nothing but a form of metadata that helps in providing data about the program without being a part of the program.
+
+The first component is the Spring Boot starter component which handles the dependency management. Using this component one can resolve the problem as this provides a set of dependencies made exclusively for programmers’ convenience. 
+
+For example, if one needs to include all dependencies required for security, they can use spring-boot-starter-security as the artifact-id. The required dependencies are mentioned in pom.xml.
+
+```
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId> spring-boot-starter-security</artifactId>
+</dependency>
+```
+
+Next in line is the auto-configuration using @EnableAutoConfiguration or @SpringBootApplication and these annotations help in automatically configuring the spring boot application being developed. For example, if there is the presence of the MySQL database in the classes defined in the application, then this autoconfiguration will configure an in-memory database.
+
+Now that we are done with all our configuration how does the code knows where does the spring boot application starts? To have an entry point in our code for the spring boot application we use the annotation @SpringBootApplication. Now one must be wondering that we use @SpringBootApplication for auto-configuration, then how come it is used for starting point as well. So, to answer this, @SpringBootApplication does more than just auto-configuring. It autoconfigures, locates the starting point of spring boot application and @ComponentScan annotation.
+
+There are some of the modules of the Spring Boot
+
+<br>
+
+<div align="center"><img src="img/spring_boot_modules-w764-h601.png" width=764 height=601><br><sub>Fig 6 - Spring Boot Modules - (<a href='[https://www.w3schools.blog/spring-boot-architecture-diagram-components](https://www.w3schools.blog/spring-boot-architecture-diagram-components)'>Work by W3Schools</a>) </sub></div>
+
+<br>
+
+- **Spring Boot Starters:** Main concept behind spring boot starters is to reduce the dependencies definitions and to simplify the project build dependencies. For example : if we are creating spring application than we have to define following dependencies in pom.xml file –
+
+  - Spring core Jar file
+  - Spring Web Jar file
+  - Spring Web MVC Jar file
+  - Servlet Jar file
+    - **Spring Boot Starters:** provides the facility to add only one jar file spring-boot-starter-web instead of adding 4 jar files.
+
+- **Spring Boot AutoConfigurator:** Main concept behind Spring Boot AutoConfigurator is to minimizing the programmer’s effort to define lots of XML configuration. It will take care of all these XML configurations and annotations.
+
+- **Spring Boot CLI:** It is Spring Boot software which is used to run and test Spring Boot applications from command prompt. CLI refers to command line arguments. To execute a spring application, spring boot CLI uses Spring Boot Starter and Spring Boot AutoConfigurate components to resolve all dependencies.
+
+- **Spring Boot Actuator:** Spring boot actuator is a tool which provides HTTP endpoints. We can manage our production application using these HTTP endpoints.
+
 #### <a name="chapter2part2"></a>Chapter 2 - Part 2: Starting Spring Boot
 
 #### <a name="chapter2part3"></a>Chapter 2 - Part 3: First Project
