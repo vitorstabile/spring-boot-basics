@@ -86,7 +86,7 @@ In the concept of Java Web Container, we have the Spring framework controlling i
 
 <br>
 
-<div align="center"><img src="img/java_web_architecture-w344-h283.png" width=344 height=283><br><sub>Fig 2 - Java Web Architecture - (<a href='[https://www.casadocodigo.com.br/products/livro-spring-boot](https://www.casadocodigo.com.br/products/livro-spring-boot)'>Work by Fernando Boaglio</a>) </sub></div>
+<div align="center"><img src="img/java_web_architecture-w344-h283.png" width=344 height=283><br><sub>Fig 2 - Java Web Architecture - (<a href='https://www.casadocodigo.com.br/products/livro-spring-boot'>Work by Fernando Boaglio</a>) </sub></div>
 
 <br>
 
@@ -94,7 +94,7 @@ In the new concept, we have Spring Boot in full control providing the web server
 
 <br>
 
-<div align="center"><img src="img/java_web_architecture2-w344-h283.png" width=344 height=283><br><sub>Fig 3 - Spring Boot Architecture - (<a href='[https://www.casadocodigo.com.br/products/livro-spring-boot](https://www.casadocodigo.com.br/products/livro-spring-boot)'>Work by Fernando Boaglio</a>) </sub></div>
+<div align="center"><img src="img/java_web_architecture2-w344-h283.png" width=344 height=283><br><sub>Fig 3 - Spring Boot Architecture - (<a href='https://www.casadocodigo.com.br/products/livro-spring-boot'>Work by Fernando Boaglio</a>) </sub></div>
 
 <br>
 
@@ -102,7 +102,7 @@ The Spring Framework contains a lot of features, which are well-organized in abo
 
 <br>
 
-<div align="center"><img src="img/spring_framework_modules-w577-h446.png" width=577 height=466><br><sub>Fig 4 - Spring Framework Modules - (<a href='[https://docs.spring.io/spring-framework/docs/3.0.0.M4/reference/html/ch01s02.html](https://docs.spring.io/spring-framework/docs/3.0.0.M4/reference/html/ch01s02.html)'>Work by Spring Docs</a>) </sub></div>
+<div align="center"><img src="img/spring_framework_modules-w577-h446.png" width=577 height=466><br><sub>Fig 4 - Spring Framework Modules - (<a href='https://docs.spring.io/spring-framework/docs/3.0.0.M4/reference/html/ch01s02.html'>Work by Spring Docs</a>) </sub></div>
 
 <br>
 
@@ -114,7 +114,7 @@ Using spring boot there is no complex XML configuration and it makes easier for 
 
 <br>
 
-<div align="center"><img src="img/spring_boot_architecture-w898-h482.png" width=898 height=482><br><sub>Fig 5 - Spring Boot Architecture - (<a href='[https://www.educba.com/spring-boot-architecture/](https://www.educba.com/spring-boot-architecture/)'>Work by Educba</a>) </sub></div>
+<div align="center"><img src="img/spring_boot_architecture-w898-h482.png" width=898 height=482><br><sub>Fig 5 - Spring Boot Architecture - (<a href='https://www.educba.com/spring-boot-architecture/'>Work by Educba</a>) </sub></div>
 
 <br>
 
@@ -139,7 +139,7 @@ There are some of the modules of the Spring Boot
 
 <br>
 
-<div align="center"><img src="img/spring_boot_modules-w764-h601.png" width=764 height=601><br><sub>Fig 6 - Spring Boot Modules - (<a href='[https://www.w3schools.blog/spring-boot-architecture-diagram-components](https://www.w3schools.blog/spring-boot-architecture-diagram-components)'>Work by W3Schools</a>) </sub></div>
+<div align="center"><img src="img/spring_boot_modules-w764-h601.png" width=764 height=601><br><sub>Fig 6 - Spring Boot Modules - (<a href='https://www.w3schools.blog/spring-boot-architecture-diagram-components'>Work by W3Schools</a>) </sub></div>
 
 <br>
 
