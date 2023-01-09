@@ -76,6 +76,28 @@ But, in practice, unless you need or want to implement a very unique configurati
   
 #### <a name="chapter2part1"></a>Chapter 2 - Part 1: Framework Architecture
 
+Since 2003, the Spring ecosystem has grown a lot, which developer's point of view is good, as it increases the range of options to use, and he doesn't need to implement it himself. E.g: to add an authentication in the application, we can use Spring Security; to authenticate with Facebook or Google, we can use Spring Social; already if there is a need to create many processes with scheduled time, we have Spring Batch.
+
+However, this growth of Spring has brought some problems: with many modules came many dependencies, and the configuration is no longer as simple as before.
+
+Spring Boot, in addition to boosting development for microservices, it also helps with configuration by importing and automatically configuring all dependencies such as we will see in the next chapters. Sometimes he is confused with a simple framework, but actually it's a concept whole new way of creating web applications.
+
+In the concept of Java Web Container, we have the Spring framework controlling its business rules packaged in a JAR, which must comply with the standards (servlet, filter, directory WEB-INF etc.)
+
+<br>
+
+<div align="center"><img src="img/java_web_architecture-w344-h283.png" width=344 height=283><br><sub>Fig 2 - Java Web Architecture - (<a href='[https://www.casadocodigo.com.br/products/livro-spring-boot](https://www.casadocodigo.com.br/products/livro-spring-boot)'>Work by Fernando Boaglio</a>) </sub></div>
+
+<br>
+
+In the new concept, we have Spring Boot in full control providing the web server and controlling its rules of business.
+
+<br>
+
+<div align="center"><img src="img/java_web_architecture2-w344-h283.png" width=344 height=283><br><sub>Fig 3 - Spring Boot Architecture - (<a href='[https://www.casadocodigo.com.br/products/livro-spring-boot](https://www.casadocodigo.com.br/products/livro-spring-boot)'>Work by Fernando Boaglio</a>) </sub></div>
+
+<br>
+
 #### <a name="chapter2part2"></a>Chapter 2 - Part 2: Starting Spring Boot
 
 #### <a name="chapter2part3"></a>Chapter 2 - Part 3: First Project
