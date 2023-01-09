@@ -33,7 +33,7 @@ Spring Boot consists of the Spring Framework and Embedded Servers. Because it us
 
 <br>
 
-<div align="center"><img src="img/spring_boot-w639-h147.png" width=639 height=147><br><sub>Fig 1 - Spring Boot - (<a href='[https://www.javatpoint.com/collections-in-java](https://www.educative.io/answers/what-is-spring-boot)'>Work by Educative</a>) </sub></div>
+<div align="center"><img src="img/spring_boot-w639-h147.png" width=639 height=147><br><sub>Fig 1 - Spring Boot - (<a href='[https://www.javatpoint.com/collections-in-java]'>Work by Educative</a>) </sub></div>
 
 <br>
 
