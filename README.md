@@ -10,6 +10,7 @@
     - [Chapter 2 - Part 1: Framework Architecture](#chapter2part1)
     - [Chapter 2 - Part 2: Starting Spring Boot](#chapter2part2)
     - [Chapter 2 - Part 3: First Project](#chapter2part3)
+    - [Chapter 2 - Part 4: Building a simple REST API](#chapter2part4)
 
 ## <a name="chapter1"></a>Chapter 1: Introducing Spring Boot
   
@@ -207,3 +208,108 @@ If everything is Ok, this logs will show up and the application will start at lo
 <div align="center"><img src="img/logspringboot-w1809-h452.png" width=1809 height=452><br><sub>Spring Boot Logs - (<a href='https://github.com/vitorstabile'>Work by Vitor Garcia</a>) </sub></div>
 
 <br>
+
+#### <a name="chapter2part4"></a>Chapter 2 - Part 4: Building a simple REST API
+
+Let's building a simple Rest API. The goal is build endpoint, that when I perform a GET in the resource /employees, will return a list of employees of my company.
+
+Let's Create a class EmployeeController, that will be our Rest Controller
+
+
+```java
+package com.vitorproject.springboot.learnspringboot.controller;
+
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Arrays;
+
+@RestController
+public class EmployeeController {
+
+    public List<Employee> getAllEmployees() {
+        return Arrays.asList(
+                new Employee(1, "John", "IT"),
+                new Employee(2, "Mike", "HR")
+        );
+    }
+}
+```
+
+Now, we will create a Data Transfer Object, that will be our Employee
+
+```java
+package com.vitorproject.springboot.learnspringboot.dto;
+
+public class Employee {
+
+    private Long id;
+
+    private String name;
+
+    private String department;
+
+    public Employee() {
+    }
+
+    public Employee(Long id, String name, String department) {
+        this.id = id;
+        this.name = name;
+        this.department = department;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getDepartment() {
+        return department;
+    }
+
+    public void setDepartment(String department) {
+        this.department = department;
+    }
+
+    @Override
+    public String toString() {
+        return "Employee{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", department='" + department + '\'' +
+                '}';
+    }
+}
+```
+
+Now, we have to map this URL in the controller
+
+```java
+@RestController
+public class EmployeeController {
+
+    @RequestMapping("/employees")
+    public List<Employee> getAllEmployees() {
+        return Arrays.asList(
+                new Employee(1L, "John", "IT"),
+                new Employee(2L, "Mike", "HR")
+        );
+    }
+}
+```
+
+If we access http://localhost:8080/employees, we will get the array of json objects
+
+```
+[{"id":1,"name":"John","department":"IT"},{"id":2,"name":"Mike","department":"HR"}]
+```
