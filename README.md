@@ -160,3 +160,50 @@ There are some of the modules of the Spring Boot
 #### <a name="chapter2part2"></a>Chapter 2 - Part 2: Starting Spring Boot
 
 #### <a name="chapter2part3"></a>Chapter 2 - Part 3: First Project
+
+Go to [Spring Initializr](https://start.spring.io/) and select the following:
+
+- **Project**
+   - Maven Project
+- **Language**
+   - Java
+- **Spring Boot Version**
+   - For Java Version 8 -> Spring Boot 2.x
+   - For Java Version 17 -> Spring Boot 3.x
+- **Packaging**
+   - Jar
+- **Java**
+   - For Spring Boot 2.x -> Java Version 8
+   - For Spring Boot 3.x -> Java Version 8
+- **Dependencies**
+   - Spring Web -> To Construct Rest APIs
+
+<br>
+
+<div align="center"><img src="img/springbootconfig-w1677-h836.png" width=1677 height=836><br><sub>Spring Boot Download - (<a href='https://github.com/vitorstabile'>Work by Vitor Garcia</a>) </sub></div>
+
+<br>
+
+Unzip the project (learn-spring-boot) to a folder of your preference (Ex: learnspringboot), and open the project using your IDE of preference. In this case, we will use the IntelliJ.
+
+<br>
+
+<div align="center"><img src="img/openproject-w326-h239.png" width=326 height=239><br><sub>Spring Boot Project Open in IntelliJ - (<a href='https://github.com/vitorstabile'>Work by Vitor Garcia</a>) </sub></div>
+
+<br>
+
+IntelliJ will load the dependencies automatically when detecting a Maven Project. After all dependencies is download, try to run the LearnSpringBootApplication
+
+<br>
+
+<div align="center"><img src="img/runproject-w918-h608.png" width=918 height=608><br><sub>Run Spring Boot - (<a href='https://github.com/vitorstabile'>Work by Vitor Garcia</a>) </sub></div>
+
+<br>
+
+If everything is Ok, this logs will show up and the application will start at localhost:8080
+
+<br>
+
+<div align="center"><img src="img/logspringboot-w1809-h452.png" width=1809 height=452><br><sub>Spring Boot Logs - (<a href='https://github.com/vitorstabile'>Work by Vitor Garcia</a>) </sub></div>
+
+<br>
