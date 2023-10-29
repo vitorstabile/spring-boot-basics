@@ -402,3 +402,21 @@ If we open the pom xml of the spring-boot-starter-web, we will find this depende
   - Embedded Servlet Container - Tomcat is the default (EmbeddedWebServerFactoryCustomizerAutoConfiguration)
   - Default Error Pages (ErrorMvcAutoConfiguration)
   - Bean<->JSON (JacksonHttpMessageConvertersConfiguration)
+
+#### <a name="chapter2part6"></a>Chapter 2 - Part 6: Exploring Spring Boot Dev Tools
+
+- Increase developer productivity
+- Why do you need to restart the server manually for every code change?
+
+The dependency is:
+
+```
+<dependency>
+  <groupId>org.springframework.boot</groupId>
+  <artifactId>spring-boot-starter-web</artifactId>
+</dependency>
+```
+
+If we make a change in the code, the result will automatically validated.
+
+- Remember: For pom.xml dependency changes, you will need to restart server manually
