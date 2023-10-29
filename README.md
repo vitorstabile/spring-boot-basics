@@ -4,8 +4,9 @@
 
 1. [Chapter 1: Introducing Spring Boot](#chapter1)
     - [Chapter 1 - Part 1: What is Spring Framework?](#chapter1part1)
-    - [Chapter 1 - Part 2: What is Spring Boot?](#chapter1part1)
-    - [Chapter 1 - Part 3: Spring Boot vs Spring](#chapter1part2)
+    - [Chapter 1 - Part 2: What is Spring Boot?](#chapter1part2)
+    - [Chapter 1 - Part 3: Spring Boot vs Spring](#chapter1part3)
+    - [Chapter 1 - Part 4: What's the Most Important Goal of Spring Boot?](#chapter1part4)
 2. [Chapter 2: Knowing Spring Boot](#chapter2)
     - [Chapter 2 - Part 1: Framework Architecture](#chapter2part1)
     - [Chapter 2 - Part 2: Starting Spring Boot](#chapter2part2)
@@ -72,6 +73,20 @@ Spring Boot helps developers create applications that just run. Specifically, it
 Again, the biggest advantages of using Spring Boot versus Spring Framework alone are ease of use and faster development. In theory, this comes at the expense of the greater flexibility you get from working directly with Spring Framework.
 
 But, in practice, unless you need or want to implement a very unique configuration, using Spring Booth is worth the tradeoff. You still are able to use Spring Framework’s very popular annotation system that lets you easily inject extra dependencies (not covered by Spring Starters) into your application. And, you still get access to all Spring Framework features, including easy event handling, validation, data binding, type conversion, and built-in security and testing capabilities. Bottom line, if your project’s scope is covered by even just one Spring Starter, Spring Boot can significantly streamline development.
+
+#### <a name="chapter1part4"></a>Chapter 1 - Part 4: What's the Most Important Goal of Spring Boot?
+
+- Help you build PRODUCTION-READY apps QUICKLY
+  - Build QUICKLY
+    - Spring Initializr - Easy Create Spring Boot Projects in https://start.spring.io/
+    - Spring Boot Starter Projects - Quickly define dependencies for your projects
+    - Spring Boot Auto Configuration - Automatically provide configuration based in the define dependencies wich are in the class path
+    - Spring Boot DevTools - Help make application changes without having to manually restart the server 
+  - Be PRODUCTION-READY
+    - Logging
+    - Different Configuration for Different Environments
+      - Profiles, ConfigurationProperties
+    - Monitoring (Spring Boot Actuator)
 
 ## <a name="chapter2"></a>Chapter 2: Knowing Spring Boot
   
