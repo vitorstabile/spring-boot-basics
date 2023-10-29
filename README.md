@@ -9,9 +9,10 @@
     - [Chapter 1 - Part 4: What's the Most Important Goal of Spring Boot?](#chapter1part4)
 2. [Chapter 2: Knowing Spring Boot](#chapter2)
     - [Chapter 2 - Part 1: Framework Architecture](#chapter2part1)
-    - [Chapter 2 - Part 2: Starting Spring Boot](#chapter2part2)
-    - [Chapter 2 - Part 3: First Project](#chapter2part3)
-    - [Chapter 2 - Part 4: Building a simple REST API](#chapter2part4)
+    - [Chapter 2 - Part 2: First Project](#chapter2part2)
+    - [Chapter 2 - Part 3: Building a simple REST API](#chapter2part3)
+    - [Chapter 2 - Part 4: Exploring Spring Boot Starter Projects](#chapter2part4)
+    - [Chapter 2 - Part 5: Exploring Spring Boot Auto Configuration](#chapter2part5)
 
 ## <a name="chapter1"></a>Chapter 1: Introducing Spring Boot
   
@@ -173,9 +174,7 @@ There are some of the modules of the Spring Boot
 
 - **Spring Boot Actuator:** Spring boot actuator is a tool which provides HTTP endpoints. We can manage our production application using these HTTP endpoints.
 
-#### <a name="chapter2part2"></a>Chapter 2 - Part 2: Starting Spring Boot
-
-#### <a name="chapter2part3"></a>Chapter 2 - Part 3: First Project
+#### <a name="chapter2part2"></a>Chapter 2 - Part 2: First Project
 
 Go to [Spring Initializr](https://start.spring.io/) and select the following:
 
@@ -224,7 +223,7 @@ If everything is Ok, this logs will show up and the application will start at lo
 
 <br>
 
-#### <a name="chapter2part4"></a>Chapter 2 - Part 4: Building a simple REST API
+#### <a name="chapter2part3"></a>Chapter 2 - Part 3: Building a simple REST API
 
 Let's building a simple Rest API. The goal is build endpoint, that when I perform a GET in the resource /employees, will return a list of employees of my company.
 
@@ -328,3 +327,78 @@ If we access http://localhost:8080/employees, we will get the array of json obje
 ```
 [{"id":1,"name":"John","department":"IT"},{"id":2,"name":"Mike","department":"HR"}]
 ```
+
+#### <a name="chapter2part4"></a>Chapter 2 - Part 4: Exploring Spring Boot Starter Projects
+
+- I need a lot of frameworks to build application features:
+  - Build a REST API: I need Spring, Spring MVC, Tomcat, JSON conversion...
+  - Write Unit Tests: I need Spring Test, JUnit, Mockito, ...
+
+- How can I group them and make it easy to build applications?
+  - Starters: Convenient dependency descriptors for diff. features
+ ```
+  <dependency>
+    <groupId>org.springframework.boot</groupId>
+	<artifactId>spring-boot-starter-web</artifactId>
+  </dependency>
+```
+If we open the pom xml of the spring-boot-starter-web, we will find this dependencies
+
+```
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter</artifactId>
+      <version>3.1.4</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-json</artifactId>
+      <version>3.1.4</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-tomcat</artifactId>
+      <version>3.1.4</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-web</artifactId>
+      <version>6.0.12</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-webmvc</artifactId>
+      <version>6.0.12</version>
+      <scope>compile</scope>
+    </dependency>
+```
+ 
+- Spring Boot provides variety of starter projects:
+  - Web Application & REST API - Spring Boot Starter Web (spring-webmvc, spring-web, spring-boot-starter-tomcat, spring-boot-starter-json)
+  - Unit Tests - Spring Boot Starter Test
+  - Talk to database using JPA - Spring Boot Starter Data JPA
+  - Talk to database using JDBC - Spring Boot Starter JDBC
+  - Secure your web application or REST API - Spring Boot Starter Security
+
+- (REMEMBER) Starters: Define all application dependencies
+
+#### <a name="chapter2part5"></a>Chapter 2 - Part 5: Exploring Spring Boot Auto Configuration
+
+- I need lot of configuration to build Spring app:
+  - Component Scan, DispatcherServlet, Data Sources, JSON Conversion, ...
+
+- How can I simplify this?
+  - Auto Configuration: Automated configuration for your app
+    - Decided based on:
+      - Which frameworks are in the Class Path?
+      - What is the existing configuration (Annotations etc)?
+
+- Example: Spring Boot Starter Web
+  - Dispatcher Servlet (DispatcherServletAutoConfiguration)
+  - Embedded Servlet Container - Tomcat is the default (EmbeddedWebServerFactoryCustomizerAutoConfiguration)
+  - Default Error Pages (ErrorMvcAutoConfiguration)
+  - Bean<->JSON (JacksonHttpMessageConvertersConfiguration)
