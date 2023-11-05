@@ -495,6 +495,86 @@ Now, the active profile is prod, and the log level will be using is info
 
 #### <a name="chapter2part8"></a>Chapter 2 - Part 8: ConfigurationProperties in SpringBoot
 
+Let's see now, how can you set complex configurations.
+
+Let's say you have a currency service and you wantt to configure differente services to this currency service like, url, username and key.
+
+```
+currency-service.url=
+currency-service.username=
+currency-service.key=
+```
+
+Create a class with name CurrencyServiceConfiguration
+
+```
+public class CurrencyServiceConfiguration {
+
+}
+```
+
+Now, add a Annotation called @ConfigurationProperties. To detect the currency-service prefix, add prefix after the annotation and add the Annotation component, to this class be a bean manage by spring
+
+```
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.stereotype.Component;
+
+@ConfigurationProperties(prefix = "currency-service")
+@Component
+public class CurrencyServiceConfiguration {
+
+}
+```
+
+Now, make the getters and setters for this class.
+
+Go to your **application.properties** and add this
+
+```
+logging.level.org.springframework=debug
+spring.profiles.active=prod
+
+currency-service.url=http://default.learnspringboot.com
+currency-service.username=defaultusername
+currency-service.key=defaultkey
+```
+
+Now, let's see if this is working. Le'ts create a Controller to see if this values is mapping
+
+```
+package com.vitorproject.springboot.learnspringboot.controller;
+
+import com.vitorproject.springboot.learnspringboot.CurrencyServiceConfiguration;
+import com.vitorproject.springboot.learnspringboot.dto.Employee;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Arrays;
+import java.util.List;
+
+@RestController
+public class CurrencyConfigurationController {
+
+    @Autowired
+    CurrencyServiceConfiguration configuration;
+
+    @RequestMapping("/currency-configuration")
+    public CurrencyServiceConfiguration getConfiguration() {
+        return configuration;
+    }
+}
+```
+
+Go to localhost:8080/currency-configuration and you will see that the values is mapped from application.properties
+
+<br>
+
+<div align="center"><img src="img/configurationpropertiespringboot-w611-h269.png" width=611 height=269><br><sub>Values Mapped fromapplication.properties - (<a href='https://github.com/vitorstabile'>Work by Vitor Garcia</a>) </sub></div>
+
+<br>
+
+
 #### <a name="chapter2part9"></a>Chapter 2 - Part 9: Embedded Servers in SpringBoot
 
 - How do you deploy your application?
