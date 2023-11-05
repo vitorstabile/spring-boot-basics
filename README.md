@@ -19,6 +19,8 @@
     - [Chapter 2 - Part 9: Embedded Servers in SpringBoot](#chapter2part9)
     - [Chapter 2 - Part 10: Actuator in SpringBoot](#chapter2part10)
     - [Chapter 2 - Part 11: Understanding Spring Boot - Spring - Spring MVC](#chapter2part11)
+3. [Chapter 3: JPA and Hibernate with Spring Boot](#chapter3)
+    - [Chapter 2 - Part 1: Config a New Spring Boot Project with JPA and Hibernate](#chapter3part1)
 
 ## <a name="chapter1"></a>Chapter 1: Introducing Spring Boot
   
@@ -738,3 +740,7 @@ If you enter in http://localhost:8080/actuator/metrics, you can see how many pro
     - Embedded Server: No need for separate application servers!
     - Logging and Error Handling
     - Profiles and ConfigurationProperties
+
+## <a name="chapter3"></a>Chapter 3: JPA and Hibernate with Spring Boot
+  
+#### <a name="chapter3part1"></a>Chapter 3 - Part 1: Config a New Spring Boot Project with JPA and Hibernate
