@@ -13,6 +13,12 @@
     - [Chapter 2 - Part 3: Building a simple REST API](#chapter2part3)
     - [Chapter 2 - Part 4: Exploring Spring Boot Starter Projects](#chapter2part4)
     - [Chapter 2 - Part 5: Exploring Spring Boot Auto Configuration](#chapter2part5)
+    - [Chapter 2 - Part 6: Exploring Spring Boot Dev Tools](#chapter2part6)
+    - [Chapter 2 - Part 7: Profiles in SpringBoot](#chapter2part7)
+    - [Chapter 2 - Part 8: ConfigurationProperties in SpringBoot](#chapter2part8)
+    - [Chapter 2 - Part 9: Embedded Servers in SpringBoot](#chapter2part9)
+    - [Chapter 2 - Part 10: Actuator in SpringBoot](#chapter2part10)
+    - [Chapter 2 - Part 11: Understanding Spring Boot - Spring - Spring MVC](#chapter2part11)
 
 ## <a name="chapter1"></a>Chapter 1: Introducing Spring Boot
   
@@ -420,3 +426,13 @@ The dependency is:
 If we make a change in the code, the result will automatically validated.
 
 - Remember: For pom.xml dependency changes, you will need to restart server manually
+
+#### <a name="chapter2part7"></a>Chapter 2 - Part 7: Profiles in SpringBoot
+
+#### <a name="chapter2part8"></a>Chapter 2 - Part 8: ConfigurationProperties in SpringBoot
+
+#### <a name="chapter2part9"></a>Chapter 2 - Part 9: Embedded Servers in SpringBoot
+
+#### <a name="chapter2part10"></a>Chapter 2 - Part 10: Actuator in SpringBoot
+
+#### <a name="chapter2part11"></a>Chapter 2 - Part 11: Understanding Spring Boot - Spring - Spring MVC
