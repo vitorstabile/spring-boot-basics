@@ -523,6 +523,33 @@ import org.springframework.stereotype.Component;
 @Component
 public class CurrencyServiceConfiguration {
 
+    private String url;
+    private String username;
+    private String key;
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
+    }
 }
 ```
 
@@ -592,7 +619,43 @@ Go to localhost:8080/currency-configuration and you will see that the values is 
   - Embedded Server Examples:
     - spring-boot-starter-tomcat
     - spring-boot-starter-jetty
-    - spring-boot-starter-undertow 
+    - spring-boot-starter-undertow
+   
+To see this in action, install Maven in your machine
+
+Open a terminal, and where your project is, put this command
+
+```
+mvn clean install
+```
+
+If the build was success, you will receive this in final terminal
+
+```
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  11.566 s
+[INFO] Finished at: 2023-11-05T19:07:26Z
+[INFO] ------------------------------------------------------------------------
+```
+
+Now, go to the location where the .jar file was create, in this case, in the target folder. The file was created as learn-spring-boot-0.0.1-SNAPSHOT.jar
+
+Now, open the terminal where the jar file and put the command
+
+```
+java -jar learn-spring-boot-0.0.1-SNAPSHOT.jar
+```
+
+Now, the application is running
+
+<br>
+
+<div align="center"><img src="img/embbedserverpringboot-w1839-h408.png" width=1839 height=408><br><sub>Application Running via Terminal - (<a href='https://github.com/vitorstabile'>Work by Vitor Garcia</a>) </sub></div>
+
+<br>
+
 
 #### <a name="chapter2part10"></a>Chapter 2 - Part 10: Actuator in SpringBoot
 
