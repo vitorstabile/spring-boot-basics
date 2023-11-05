@@ -666,6 +666,55 @@ Now, the application is running
   - health - Application health information
   - metrics - Application metrics
   - mappings - Details around Request Mappings
+ 
+Add this dependency in your pom.xml
+
+```
+<dependency>
+   <groupId>org.springframework.boot</groupId>
+   <artifactId>spring-boot-starter-actuator</artifactId>
+</dependency>
+```
+
+If you run your application, you will see that one endpoint is exposed
+
+```
+ Exposing 1 endpoint(s) beneath base path '/actuator'
+```
+
+Let's access this endpoint -> http://localhost:8080/actuator
+
+You will enter in a page with this
+
+```
+{"_links":{"self":{"href":"http://localhost:8080/actuator","templated":false},"health":{"href":"http://localhost:8080/actuator/health","templated":false},"health-path":{"href":"http://localhost:8080/actuator/health/{*path}","templated":true}}}
+```
+
+If you enter in the health, you will see that the status of your application is up
+
+```
+{"status":"UP"}
+```
+
+Now, go to your **application.properties** and put this line
+
+```
+management.endpoints.web.exposure.include=*
+```
+
+Now, if you enter in the actuator endpoint -> http://localhost:8080/actuator you will see a lot of endpoint to enter
+
+```
+{"_links":{"self":{"href":"http://localhost:8080/actuator","templated":false},"beans":{"href":"http://localhost:8080/actuator/beans","templated":false},"caches-cache":{"href":"http://localhost:8080/actuator/caches/{cache}","templated":true},"caches":{"href":"http://localhost:8080/actuator/caches","templated":false},"health":{"href":"http://localhost:8080/actuator/health","templated":false},"health-path":{"href":"http://localhost:8080/actuator/health/{*path}","templated":true},"info":{"href":"http://localhost:8080/actuator/info","templated":false},"conditions":{"href":"http://localhost:8080/actuator/conditions","templated":false},"configprops":{"href":"http://localhost:8080/actuator/configprops","templated":false},"configprops-prefix":{"href":"http://localhost:8080/actuator/configprops/{prefix}","templated":true},"env":{"href":"http://localhost:8080/actuator/env","templated":false},"env-toMatch":{"href":"http://localhost:8080/actuator/env/{toMatch}","templated":true},"loggers":{"href":"http://localhost:8080/actuator/loggers","templated":false},"loggers-name":{"href":"http://localhost:8080/actuator/loggers/{name}","templated":true},"heapdump":{"href":"http://localhost:8080/actuator/heapdump","templated":false},"threaddump":{"href":"http://localhost:8080/actuator/threaddump","templated":false},"metrics-requiredMetricName":{"href":"http://localhost:8080/actuator/metrics/{requiredMetricName}","templated":true},"metrics":{"href":"http://localhost:8080/actuator/metrics","templated":false},"scheduledtasks":{"href":"http://localhost:8080/actuator/scheduledtasks","templated":false},"mappings":{"href":"http://localhost:8080/actuator/mappings","templated":false}}}
+```
+
+In this endpoits, there is a lot of metrics about your application.
+
+If you enter in http://localhost:8080/actuator/beans, you will see all the beans that is autoconfigurated for example
+
+If you enter in http://localhost:8080/actuator/metrics, you can see how many properties that can be monitoted in yout application. For example, if you use http://localhost:8080/actuator/metrics/http.server.requests, you will se all requests was made in your application.
+
+
 
 #### <a name="chapter2part11"></a>Chapter 2 - Part 11: Understanding Spring Boot - Spring - Spring MVC
 
