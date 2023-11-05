@@ -440,6 +440,58 @@ If we make a change in the code, the result will automatically validated.
  
 - How can you define externalized configuration for your application?
   - ConfigurationProperites: Define externalized configuration
+ 
+Let's say qe have two enviroments, in this case, a dev and prod enviroment. One of the differences about the enviroment in dev and in prod is the debbugind level. In dev we want a trace log level and in prod we want a info log level.
+
+```
+dev
+logging.level.org.springframework=trace
+prod
+logging.level.org.springframework=info
+```
+
+To make this, go to your **application.properties** in your spring boot project in src/main/resources and make a two copies of this files, and rename like the following:
+
+```
+application-dev.properties
+
+application-prod.properties
+```
+
+In **application.properties** put this level of log:
+
+```
+logging.level.org.springframework=debug
+```
+
+In **application-dev.properties** put this level of log:
+
+```
+logging.level.org.springframework=trace
+```
+
+In **application-prod.properties** put this level of log:
+
+```
+logging.level.org.springframework=info
+```
+
+<br>
+
+<div align="center"><img src="img/profilepringboot-w1302-h525.png" width=1302 height=525><br><sub>Spring Boot Profiles in application.properties - (<a href='https://github.com/vitorstabile'>Work by Vitor Garcia</a>) </sub></div>
+
+<br>
+
+By default, Spring Boot use as default the application.properties. If you run now the application, all debug levels will be showing. To specific a active profile, go to your **application.properties** and put this
+
+```
+logging.level.org.springframework=debug
+spring.profiles.active=prod
+```
+
+Now, the active profile is prod, and the log level will be using is info
+
+
 
 #### <a name="chapter2part8"></a>Chapter 2 - Part 8: ConfigurationProperties in SpringBoot
 
