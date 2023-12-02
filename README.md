@@ -1034,3 +1034,39 @@ public class CourseJdbcCommandLineRunner implements CommandLineRunner {
 
 <br>
 
+Now, create a method delete
+
+```java
+@Repository
+public class CourseJdbcRepository {
+
+// same code
+
+private static String DELETE_QUERY =
+            """
+                delete from course
+                 where id = ?;
+            """;
+			
+public void deleteById(long id) {
+        springJdbcTemplate.update(DELETE_QUERY, id);
+    }
+```
+
+```java
+
+@Component
+public class CourseJdbcCommandLineRunner implements CommandLineRunner {
+
+    @Autowired
+    private CourseJdbcRepository repository;
+    @Override
+    public void run(String... args) throws Exception {
+        repository.insert(new Course(1, "Learn Python", "in28minutes"));
+        repository.insert(new Course(2, "Learn Java", "in28minutes"));
+        repository.insert(new Course(3, "Learn C++", "in28minutes"));
+        
+        repository.deleteById(1);
+    }
+}
+```
