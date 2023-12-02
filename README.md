@@ -20,7 +20,8 @@
     - [Chapter 2 - Part 10: Actuator in SpringBoot](#chapter2part10)
     - [Chapter 2 - Part 11: Understanding Spring Boot - Spring - Spring MVC](#chapter2part11)
 3. [Chapter 3: JPA and Hibernate with Spring Boot](#chapter3)
-    - [Chapter 2 - Part 1: Config a New Spring Boot Project with JPA and Hibernate](#chapter3part1)
+    - [Chapter 3 - Part 1: Config a New Spring Boot Project with JPA and Hibernate](#chapter3part1)
+	- [Chapter 3 - Part 2: JDBC vs Spring JDBC](#chapter3part2)
 
 ## <a name="chapter1"></a>Chapter 1: Introducing Spring Boot
   
@@ -857,3 +858,41 @@ Now, if we enter in H2 Console, we will see the table
 <div align="center"><img src="img/coursetable-w723-h246.png" width=723 height=246><br><sub>H2 With courses Tables - (<a href='https://github.com/vitorstabile'>Work by Vitor Garcia</a>) </sub></div>
 
 <br>
+
+#### <a name="chapter3part2"></a>Chapter 3 - Part 2: JDBC vs Spring JDBC
+
+- JDBC
+  - Write a lot of SQL queries! (delete from todo where id=?)
+  - And write a lot of Java code
+  
+- Spring JDBC
+  - Write a lot of SQL queries (delete from todo where id=?)
+  - BUT lesser Java code
+  
+***JDBC example***
+
+```java
+public void deleteTodo(int id) {
+	PreparedStatement st = null;
+	try {
+		st = db.conn.prepareStatement("delete from todo where id=?");
+		st.setInt(1, id);
+		st.execute();
+	} catch (SQLException e) {
+		logger.fatal("Query Failed : ", e);
+	} finally {
+		if (st != null) {
+			try {st.close();}
+			catch (SQLException e) {}
+		}
+	}
+}
+```
+
+***Spring JDBC example***
+
+```java
+public void deleteTodo(int id) {
+	jdbcTemplate.update("delete from todo where id=?", id);
+}
+```
