@@ -817,3 +817,43 @@ We need to put the correct URL in the field ```JDBC URL```, because each time we
 
 <br>
 
+To configure a static url, we can go in ```application.properties``` and add this Configuration
+
+```
+spring.datasource.url=jdbc:h2:mem:testdb
+```
+
+<br>
+
+<div align="center"><img src="img/h2accessurlstatic-w463-h367.png" width=463 height=367><br><sub>H2 Test Connection Static URL - (<a href='https://github.com/vitorstabile'>Work by Vitor Garcia</a>) </sub></div>
+
+<br>
+
+If we enter in the Database, there is no tables to consult. We can create a schema, that will create tables every time the application will launch
+
+
+Go to src/main/resources and create a file with name ```schema.sql``` with this Content
+
+```sql
+create table course
+(
+    id bigint not null,
+    name varchar(255) not null,
+    author varchar(255) not null,
+    primary key (id)
+);
+```
+
+<br>
+
+<div align="center"><img src="img/schemasql-w1061-h327.png" width=1061 height=327><br><sub>Schema SQL - (<a href='https://github.com/vitorstabile'>Work by Vitor Garcia</a>) </sub></div>
+
+<br>
+
+Now, if we enter in H2 Console, we will see the table
+
+<br>
+
+<div align="center"><img src="img/coursetable-w723-h246.png" width=723 height=246><br><sub>H2 With courses Tables - (<a href='https://github.com/vitorstabile'>Work by Vitor Garcia</a>) </sub></div>
+
+<br>
