@@ -22,7 +22,9 @@
 3. [Chapter 3: JPA and Hibernate with Spring Boot](#chapter3)
     - [Chapter 3 - Part 1: Config a New Spring Boot Project with JPA and Hibernate](#chapter3part1)
 	- [Chapter 3 - Part 2: JDBC vs Spring JDBC](#chapter3part2)
-	- [Chapter 3 - Part 3: Inserting Data Using JDBC](#chapter3part3)
+	- [Chapter 3 - Part 3: Manipulate Data Using Spring JDBC](#chapter3part3)
+	- [Chapter 3 - Part 4: JPA vs Spring JPA](#chapter3part4)
+	- [Chapter 3 - Part 5: Manipulate Data Using Spring JPA](#chapter3part5)
 
 ## <a name="chapter1"></a>Chapter 1: Introducing Spring Boot
   
@@ -898,7 +900,7 @@ public void deleteTodo(int id) {
 }
 ```
 
-#### <a name="chapter3part3"></a>Chapter 3 - Part 3: Inserting Data Using JDBC
+#### <a name="chapter3part3"></a>Chapter 3 - Part 3: Manipulate Data Using Spring JDBC
 
 We will first, inserting data using Spring JDBC in a Hardcode way.
 
@@ -1070,3 +1072,84 @@ public class CourseJdbcCommandLineRunner implements CommandLineRunner {
     }
 }
 ```
+
+Now, create a method select
+
+When we make a Select, we need to map the result of select to a bean
+
+For this, we need to use queryForObject(). We need to take the resultSet, map to a bean
+
+```java
+@Repository
+public class CourseJdbcRepository {
+
+// same code
+
+ private static String SELECT_QUERY =
+            """
+                select * from course
+                 where id = ?;
+            """;
+			
+public Course findById(long id) {
+        //ResultSet -> Bean => Row Mapper =>
+        return springJdbcTemplate.queryForObject(SELECT_QUERY,
+                new BeanPropertyRowMapper<>(Course.class), id);
+
+    }
+```
+
+Add A toString method in the class
+
+```java 
+public class Course {
+
+    //same code
+
+    @Override
+    public String toString() {
+        return "Course{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", author='" + author + '\'' +
+                '}';
+    }
+}
+```
+
+Add in the CommanLine the select
+
+```java
+@Component
+public class CourseJdbcCommandLineRunner implements CommandLineRunner {
+
+    @Autowired
+    private CourseJdbcRepository repository;
+    @Override
+    public void run(String... args) throws Exception {
+        repository.insert(new Course(1, "Learn Python", "in28minutes"));
+        repository.insert(new Course(2, "Learn Java", "in28minutes"));
+        repository.insert(new Course(3, "Learn C++", "in28minutes"));
+
+        repository.deleteById(1);
+
+        Course course2 = repository.findById(2);
+        Course course3 = repository.findById(3);
+
+        System.out.println(course2);
+        System.out.println(course3);
+    }
+}
+```
+
+The result in the console
+
+```
+Course{id=2, name='Learn Java', author='in28minutes'}
+Course{id=3, name='Learn C++', author='in28minutes'}
+```
+
+#### <a name="chapter3part4"></a>Chapter 3 - Part 4: JPA vs Spring JPA
+
+
+#### <a name="chapter3part5"></a>Chapter 3 - Part 5: Manipulate Data Using Spring JPA
