@@ -1151,5 +1151,42 @@ Course{id=3, name='Learn C++', author='in28minutes'}
 
 #### <a name="chapter3part4"></a>Chapter 3 - Part 4: JPA vs Spring JPA
 
+- JPA
+  - Do NOT worry about queries
+  - Just Map Entities to Tables!
+  
+- Spring JPA
+  - Let's make JPA even more simple!
+  - I will take care of everything!
+  
+***JPA example***
+
+```java
+@Repository
+public class PersonJpaRepository {
+
+	@PersistenceContext
+	EntityManager entityManager;
+	
+	public Person findById(int id) {
+		return entityManager.find(Person.class, id);
+	}
+	
+	public Person update(Person person) {
+		return entityManager.merge(person);
+	}
+
+	public Person insert(Person person) {
+		return entityManager.merge(person);
+	}
+
+	public void deleteById(int id) {........}
+```
+
+***Spring JPA example***
+
+```java
+public interface TodoRepository extends JpaRepository<Todo, Integer>{}
+```
 
 #### <a name="chapter3part5"></a>Chapter 3 - Part 5: Manipulate Data Using Spring JPA
