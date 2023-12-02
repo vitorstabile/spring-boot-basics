@@ -744,3 +744,76 @@ If you enter in http://localhost:8080/actuator/metrics, you can see how many pro
 ## <a name="chapter3"></a>Chapter 3: JPA and Hibernate with Spring Boot
   
 #### <a name="chapter3part1"></a>Chapter 3 - Part 1: Config a New Spring Boot Project with JPA and Hibernate
+
+Go to [Spring Initializr](https://start.spring.io/) and select the following:
+
+- **Project**
+   - Maven Project
+- **Language**
+   - Java
+- **Spring Boot Version**
+   - For Java Version 8 -> Spring Boot 2.x
+   - For Java Version 17 -> Spring Boot 3.x
+- **Packaging**
+   - Jar
+- **Java**
+   - For Spring Boot 2.x -> Java Version 8
+   - For Spring Boot 3.x -> Java Version 8
+- **Dependencies**
+   - Spring Web -> To Construct Rest APIs
+   - Spring Data JDBC -> Persist Data in SQL Stores with plain JDBC using Spring Data
+   - Spring Data JPA -> Persist Data in SQL Stores with Java Persistence API using Spring Data and Hibernate
+   - H2 Datanase -> Provides a fast in-memory database
+   
+<br>
+
+<div align="center"><img src="img/springbootconfigjpa-w1590-h698.png" width=1590 height=698><br><sub>Spring Initialzr Config - (<a href='https://github.com/vitorstabile'>Work by Vitor Garcia</a>) </sub></div>
+
+<br>
+
+When we launch the application, a log about the data source will appear, showing the Data Source H2 url access in the connection pool.
+   
+<br>
+
+<div align="center"><img src="img/h2initializing-w1251-h81.png" width=1251 height=81><br><sub>Data Source H2 url access - (<a href='https://github.com/vitorstabile'>Work by Vitor Garcia</a>) </sub></div>
+
+<br>
+
+The URL to access the H2 is this: ```url=jdbc:h2:mem:99fb1e7a-4755-4187-823c-766f7c27bd7b user=SA```
+   
+The way we can enable to access this database is going in ```application.properties``` and config a property
+
+```
+spring.h2.console.enabled=true
+```
+
+Mow, in the logs, we will see this log comming:
+
+```
+2023-12-02T15:51:55.520Z  INFO 16180 --- [           main] o.s.b.a.h2.H2ConsoleAutoConfiguration    : H2 console available at '/h2-console'. Database available at 'jdbc:h2:mem:4df97811-a12d-44d6-bc11-c439e67a0fa0'
+```
+
+Now, we can access the H2 Database console throw the URL
+
+```
+https://localhost:8080/h2-console
+```
+
+<br>
+
+<div align="center"><img src="img/h2access-w504-h372.png" width=504 height=372><br><sub>H2 Access URL - (<a href='https://github.com/vitorstabile'>Work by Vitor Garcia</a>) </sub></div>
+
+<br>
+
+We need to put the correct URL in the field ```JDBC URL```, because each time we initialize the application, the URL will change
+
+<br>
+
+<div align="center"><img src="img/h2newurl-w1324-h161.png" width=1324 height=161><br><sub>H2 URL Generate - (<a href='https://github.com/vitorstabile'>Work by Vitor Garcia</a>) </sub></div>
+
+<br>
+
+<div align="center"><img src="img/h2testconnection-w500-h502.png" width=500 height=502><br><sub>H2 Test Connection - (<a href='https://github.com/vitorstabile'>Work by Vitor Garcia</a>) </sub></div>
+
+<br>
+
