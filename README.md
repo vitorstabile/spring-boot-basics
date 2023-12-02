@@ -22,6 +22,7 @@
 3. [Chapter 3: JPA and Hibernate with Spring Boot](#chapter3)
     - [Chapter 3 - Part 1: Config a New Spring Boot Project with JPA and Hibernate](#chapter3part1)
 	- [Chapter 3 - Part 2: JDBC vs Spring JDBC](#chapter3part2)
+	- [Chapter 3 - Part 3: Inserting Data Using JDBC](#chapter3part3)
 
 ## <a name="chapter1"></a>Chapter 1: Introducing Spring Boot
   
@@ -896,3 +897,54 @@ public void deleteTodo(int id) {
 	jdbcTemplate.update("delete from todo where id=?", id);
 }
 ```
+
+#### <a name="chapter3part3"></a>Chapter 3 - Part 3: Inserting Data Using JDBC
+
+We will first, inserting data using Spring JDBC in a Hardcode way.
+
+First, create a class ```CourseJdbcRepository.java```, and create this class.
+
+```java
+@Repository
+public class CourseJdbcRepository {
+
+    @Autowired
+    private JdbcTemplate springJdbcTemplate;
+
+    private static String INSERT_QUERY =
+            """
+                insert into course (id, name, author)
+                values (1, 'Learn AWS', 'in28minutes');
+            """;
+
+    public void insert() {
+        springJdbcTemplate.update(INSERT_QUERY);
+    }
+}
+```
+
+To make this class as a component managed by spring, we can use the annotation ```@Repository```, to tell spring this class is a component with specific representation, in this case a repository with will deal with data base operations.
+
+Now, to execute this query when the Spring Application starts, we need to create a CommanLine Runner
+
+```java
+@Component
+public class CourseJdbcCommandLineRunner implements CommandLineRunner {
+
+    @Autowired
+    private CourseJdbcRepository repository;
+    @Override
+    public void run(String... args) throws Exception {
+        repository.insert();
+    }
+}
+```
+
+<br>
+
+<div align="center"><img src="img/inserthardcodesql-w535-h362.png" width=535 height=362><br><sub>Insert Data in Hardcode - (<a href='https://github.com/vitorstabile'>Work by Vitor Garcia</a>) </sub></div>
+
+<br>
+
+Now, let's make a more dinamic way. We will insert a Object of type course
+
