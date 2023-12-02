@@ -946,5 +946,91 @@ public class CourseJdbcCommandLineRunner implements CommandLineRunner {
 
 <br>
 
-Now, let's make a more dinamic way. We will insert a Object of type course
+Now, let's make a more dinamic way. We will insert a Object of type Course. Let's create the Class
+
+```java
+public class Course {
+
+    private long id;
+    private String name;
+    private String author;
+
+    public Course(){
+
+    }
+
+    public Course(long id, String name, String author) {
+        this.id = id;
+        this.name = name;
+        this.author = author;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
+    }
+}
+```
+
+Now, our repository needs a adjustment in the query, because we will pass the values dinamicaly
+
+```java
+@Repository
+public class CourseJdbcRepository {
+
+    @Autowired
+    private JdbcTemplate springJdbcTemplate;
+
+    private static String INSERT_QUERY =
+            """
+                insert into course (id, name, author)
+                values (?, ?, ?);
+            """;
+
+    public void insert(Course course) {
+        springJdbcTemplate.update(INSERT_QUERY,
+                course.getId(), course.getName(), course.getAuthor());
+    }
+}
+```
+
+Our class Command Line will receive new courses
+
+```java
+@Component
+public class CourseJdbcCommandLineRunner implements CommandLineRunner {
+
+    @Autowired
+    private CourseJdbcRepository repository;
+    @Override
+    public void run(String... args) throws Exception {
+        repository.insert(new Course(1, "Learn Python", "in28minutes"));
+        repository.insert(new Course(2, "Learn Java", "in28minutes"));
+        repository.insert(new Course(3, "Learn C++", "in28minutes"));
+```
+
+<br>
+
+<div align="center"><img src="img/newcoursesinsert-w495-h368.png" width=495 height=368><br><sub>Insert Data in Spring JDBC - (<a href='https://github.com/vitorstabile'>Work by Vitor Garcia</a>) </sub></div>
+
+<br>
 
