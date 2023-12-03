@@ -10,8 +10,11 @@ public class CourseJdbcCommandLineRunner implements CommandLineRunner {
 
     @Autowired
     private CourseJdbcRepository repository;
+
     @Override
     public void run(String... args) throws Exception {
+        System.out.println("Initiate JDBC Transactions");
+
         repository.insert(new Course(1, "Learn Python", "in28minutes"));
         repository.insert(new Course(2, "Learn Java", "in28minutes"));
         repository.insert(new Course(3, "Learn C++", "in28minutes"));
@@ -23,5 +26,6 @@ public class CourseJdbcCommandLineRunner implements CommandLineRunner {
 
         System.out.println(course2);
         System.out.println(course3);
+        System.out.println("Finished JDBC Transactions");
     }
 }

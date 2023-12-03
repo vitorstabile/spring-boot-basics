@@ -1125,8 +1125,11 @@ public class CourseJdbcCommandLineRunner implements CommandLineRunner {
 
     @Autowired
     private CourseJdbcRepository repository;
+
     @Override
     public void run(String... args) throws Exception {
+        System.out.println("Initiate JDBC Transactions");
+
         repository.insert(new Course(1, "Learn Python", "in28minutes"));
         repository.insert(new Course(2, "Learn Java", "in28minutes"));
         repository.insert(new Course(3, "Learn C++", "in28minutes"));
@@ -1138,6 +1141,7 @@ public class CourseJdbcCommandLineRunner implements CommandLineRunner {
 
         System.out.println(course2);
         System.out.println(course3);
+        System.out.println("Finished JDBC Transactions");
     }
 }
 ```
@@ -1145,8 +1149,10 @@ public class CourseJdbcCommandLineRunner implements CommandLineRunner {
 The result in the console
 
 ```
+Initiate JDBC Transactions
 Course{id=2, name='Learn Java', author='in28minutes'}
 Course{id=3, name='Learn C++', author='in28minutes'}
+Finished JDBC Transactions
 ```
 
 #### <a name="chapter3part4"></a>Chapter 3 - Part 4: JPA vs Spring JPA
@@ -1190,3 +1196,148 @@ public interface TodoRepository extends JpaRepository<Todo, Integer>{}
 ```
 
 #### <a name="chapter3part5"></a>Chapter 3 - Part 5: Manipulate Data Using Spring JPA
+
+When we make use of JPA, we will mapping our entity direct to the database. 
+
+First, our course will receive the annotation ```@Entity```.This annotaion marks the class as a persistent entity. It signals to the JPA provider that the class should be treated as a table in the database.
+
+The annotaion ```@Id``` will make the field as a primary key when receive the anootation. In our case, will be the id field of the class Course
+
+The annotation ```@Column``` will map the field of our class Course, to the column of our database. In the example, our table have the colums ```name``` and ```author```, and we will put the annotation ```@Column``` in the corresponding attributes of our class
+Because of the match of names of the table and the attributes of the class, the annotation ```@Column``` is not necessary.
+
+```java
+package com.vitorproject.springboot.learnjpaandhibernate.course;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+
+@Entity
+public class Course {
+
+    @Id
+    private long id;
+	
+    @Column(name="name")
+    private String name;
+	
+    @Column(name="author")
+    private String author;
+
+//same code
+```
+
+Now, let's create our repository Class, that will be responsible to make the operations in the data base
+
+The annotation ```@Repository``` tell spring this will be a Repository class and the annotation ```@Transactional``` will tell spring, this class will make transactions from app to database
+
+We will import the ```EntityManager``` class, that will allow a lot of operations. To make a insert in a database, we will use the merge.
+
+We will use the annotation ```@PersistenceContext``` to autowired the EntityManager in the class, but we can use ```@Autowired``` too
+
+```java
+@Repository
+@Transactional
+public class CourseJpaRepository {
+
+    @PersistenceContext
+    private EntityManager entityManager;
+
+    public void insert(Course course) {
+        entityManager.merge(course);
+    }
+
+}
+```
+
+Now, let's make a findById and remove by id. The remove, is more complicate because, first, we need to find the course by Id and then, execute a remove passing the object.
+
+```java
+@Repository
+public class CourseJpaRepository {
+
+    @PersistenceContext
+    private EntityManager entityManager;
+
+    // same code
+
+    public Course findById(long id) {
+        return entityManager.find(Course.class, id);
+    }
+
+    public void deleteById(long id) {
+        Course course = entityManager.find(Course.class, id);
+        entityManager.remove(course);
+    }
+}
+```
+
+Now, let's create our commandLine Runner
+
+```java
+@Component
+public class CourseJpaCommandLineRunner implements CommandLineRunner {
+
+    @Autowired
+    private CourseJpaRepository repository;
+
+    @Override
+    public void run(String... args) throws Exception {
+
+        System.out.println("Initiate JPA Transactions");
+        repository.insert(new Course(4, "Learn Go", "in28minutes"));
+        repository.insert(new Course(5, "Learn Rust", "in28minutes"));
+        repository.insert(new Course(6, "Learn C#", "in28minutes"));
+
+        repository.deleteById(4);
+
+        Course course2 = repository.findById(5);
+        Course course3 = repository.findById(6);
+
+        System.out.println(course2);
+        System.out.println(course3);
+        System.out.println("Finished JPA Transactions");
+    }
+}
+```
+
+```
+Initiate JDBC Transactions
+Course{id=2, name='Learn Java', author='in28minutes'}
+Course{id=3, name='Learn C++', author='in28minutes'}
+Finished JDBC Transactions
+Initiate JPA Transactions
+Course{id=5, name='Learn Rust', author='in28minutes'}
+Course{id=6, name='Learn C#', author='in28minutes'}
+Finished JPA Transactions
+```
+
+if we want to see the sql that is executing in JPA, add this properti in ```application.properties``` class
+
+```
+spring.jpa.show-sql=true
+```
+
+now, we can see the sql being executed
+
+```
+Initiate JDBC Transactions
+Course{id=2, name='Learn Java', author='in28minutes'}
+Course{id=3, name='Learn C++', author='in28minutes'}
+Finished JDBC Transactions
+Initiate JPA Transactions
+Hibernate: select c1_0.id,c1_0.author,c1_0.name from course c1_0 where c1_0.id=?
+Hibernate: insert into course (author,name,id) values (?,?,?)
+Hibernate: select c1_0.id,c1_0.author,c1_0.name from course c1_0 where c1_0.id=?
+Hibernate: insert into course (author,name,id) values (?,?,?)
+Hibernate: select c1_0.id,c1_0.author,c1_0.name from course c1_0 where c1_0.id=?
+Hibernate: insert into course (author,name,id) values (?,?,?)
+Hibernate: select c1_0.id,c1_0.author,c1_0.name from course c1_0 where c1_0.id=?
+Hibernate: delete from course where id=?
+Hibernate: select c1_0.id,c1_0.author,c1_0.name from course c1_0 where c1_0.id=?
+Hibernate: select c1_0.id,c1_0.author,c1_0.name from course c1_0 where c1_0.id=?
+Course{id=5, name='Learn Rust', author='in28minutes'}
+Course{id=6, name='Learn C#', author='in28minutes'}
+Finished JPA Transactions
+```
