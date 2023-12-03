@@ -27,6 +27,8 @@
 	- [Chapter 3 - Part 5: Manipulate Data Using JPA](#chapter3part5)
 	- [Chapter 3 - Part 6: Manipulate Data Using Spring JPA](#chapter3part6)
 	- [Chapter 3 - Part 7: Hibernate vs JPA](#chapter3part7)
+4. [Chapter 4: Spring Security with Spring Boot](#chapter4)
+	- [Chapter 4 - Part 1: Security Fundamentals](#chapter4part1)
 
 ## <a name="chapter1"></a>Chapter 1: Introducing Spring Boot
   
@@ -1530,3 +1532,9 @@ Course{id=6, name='Learn C#', author='in28minutes'}
 - Hibernate is one of the popular implementations of JPA
 - Using Hibernate directly would result in a lock in to Hibernate
   - There are other JPA implementations (Toplink, for example)
+
+## <a name="chapter4"></a>Chapter 4: Spring Security with Spring Boot
+  
+#### <a name="chapter4part1"></a>Chapter 4 - Part 1: Security Fundamentals
+
+
