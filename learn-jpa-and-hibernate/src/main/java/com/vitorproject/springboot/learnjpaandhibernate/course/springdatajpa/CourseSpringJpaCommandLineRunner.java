@@ -25,5 +25,14 @@ public class CourseSpringJpaCommandLineRunner implements CommandLineRunner {
         System.out.println(repository.findById(8l));
         System.out.println(repository.findById(9l));
         System.out.println("Finished Spring JPA Transactions");
+
+
+        System.out.println("New Commands");
+        System.out.println(repository.findAll());
+        System.out.println(repository.count());
+        System.out.println(repository.findByAuthor("in28minutes"));
+        System.out.println(repository.findByAuthor(""));
+
+        System.out.println(repository.findByName("Learn C#"));
     }
 }

@@ -1425,3 +1425,96 @@ Hibernate: select c1_0.id,c1_0.author,c1_0.name from course c1_0 where c1_0.id=?
 Optional[Course{id=9, name='Learn Lua', author='in28minutes'}]
 Finished Spring JPA Transactions
 ```
+
+Let's make more operations. Let's find all entities and count all entities we have
+
+```java
+System.out.println(repository.findAll());
+System.out.println(repository.count());
+```
+
+Logs
+
+```
+New Commands
+[Course{id=2, name='Learn Java', author='in28minutes'}, Course{id=3, name='Learn C++', author='in28minutes'}, Course{id=5, name='Learn Rust', author='in28minutes'}, Course{id=6, name='Learn C#', author='in28minutes'}, Course{id=8, name='Learn Javascript', author='in28minutes'}, Course{id=9, name='Learn Lua', author='in28minutes'}]
+6
+```
+
+We can create custom methods in Jpa Repository. Let's create a method to find by author and by name.
+
+```java
+public interface CourseSpringDataJpaRepository extends JpaRepository<Course, Long> {
+
+    List<Course> findByAuthor(String author);
+
+    Course findByName(String name);
+
+}
+```
+
+OBS: Important. The name of the method must be relationated with the name of the field in the entity. If we put, findByCourseName, this will cause a error
+
+In the next example, the Spring Data JPA automatically generates the corresponding SQL queries based on the method names and parameter names, making complex querying scenarios more accessible without the need for writing native SQL queries.
+
+```java
+@Entity
+public class Book {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    
+    private String title;
+    private String author;
+    private int publicationYear;
+    private String genre;
+
+    // Getters and setters
+}
+
+public interface BookRepository extends JpaRepository<Book, Long> {
+    List<Book> findByAuthorAndPublicationYearAndGenre(String author, int publicationYear, String genre);
+	
+    List<Book> findByAuthorAndGenreAndPublicationYear(String author, String genre, int publicationYear);
+    
+    List<Book> findByAuthorAndGenre(String author, String genre);
+}
+
+```
+
+To create your custom query, you need to use Custom Query Methods
+
+```java
+public interface UserRepository extends JpaRepository<User, Long> {
+
+    @Query("SELECT u FROM User u WHERE CONCAT(u.firstName, ' ', u.lastName) LIKE %:keyword%")
+    List<User> findUsersByFullNameKeyword(@Param("keyword") String keyword);
+}
+```
+
+For more, [Creating Repository Interfaces with JPA](https://medium.com/@bubu.tripathy/best-practices-creating-repository-interfaces-with-jpa-d904bee64397) 
+
+```Java
+@Component
+public class CourseSpringJpaCommandLineRunner implements CommandLineRunner {
+
+    @Autowired
+    private CourseSpringDataJpaRepository repository;
+
+    @Override
+    public void run(String... args) throws Exception {
+
+        //same code
+		
+        System.out.println(repository.findByAuthor("in28minutes"));
+        System.out.println(repository.findByAuthor(""));
+
+        System.out.println(repository.findByName("Learn C#"));
+    }
+}
+```	
+
+```
+[Course{id=2, name='Learn Java', author='in28minutes'}, Course{id=3, name='Learn C++', author='in28minutes'}, Course{id=5, name='Learn Rust', author='in28minutes'}, Course{id=6, name='Learn C#', author='in28minutes'}, Course{id=8, name='Learn Javascript', author='in28minutes'}, Course{id=9, name='Learn Lua', author='in28minutes'}]
+[]
+Course{id=6, name='Learn C#', author='in28minutes'}
