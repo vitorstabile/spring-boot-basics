@@ -24,7 +24,8 @@
 	- [Chapter 3 - Part 2: JDBC vs Spring JDBC](#chapter3part2)
 	- [Chapter 3 - Part 3: Manipulate Data Using Spring JDBC](#chapter3part3)
 	- [Chapter 3 - Part 4: JPA vs Spring JPA](#chapter3part4)
-	- [Chapter 3 - Part 5: Manipulate Data Using Spring JPA](#chapter3part5)
+	- [Chapter 3 - Part 5: Manipulate Data Using JPA](#chapter3part5)
+	- [Chapter 3 - Part 6: Manipulate Data Using Spring JPA](#chapter3part6)
 
 ## <a name="chapter1"></a>Chapter 1: Introducing Spring Boot
   
@@ -1195,7 +1196,7 @@ public class PersonJpaRepository {
 public interface TodoRepository extends JpaRepository<Todo, Integer>{}
 ```
 
-#### <a name="chapter3part5"></a>Chapter 3 - Part 5: Manipulate Data Using Spring JPA
+#### <a name="chapter3part5"></a>Chapter 3 - Part 5: Manipulate Data Using JPA
 
 When we make use of JPA, we will mapping our entity direct to the database. 
 
@@ -1340,4 +1341,87 @@ Hibernate: select c1_0.id,c1_0.author,c1_0.name from course c1_0 where c1_0.id=?
 Course{id=5, name='Learn Rust', author='in28minutes'}
 Course{id=6, name='Learn C#', author='in28minutes'}
 Finished JPA Transactions
+```
+
+#### <a name="chapter3part5"></a>Chapter 3 - Part 6: Manipulate Data Using Spring JPA
+
+Let's make use of Spring JPA. We already make a map of the attributes in the class entity
+
+```java
+package com.vitorproject.springboot.learnjpaandhibernate.course;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+
+@Entity
+public class Course {
+
+    @Id
+    private long id;
+	
+    @Column(name="name")
+    private String name;
+	
+    @Column(name="author")
+    private String author;
+
+//same code
+```
+
+Create a interface that will extends the ```JpaRepository```. Now,In the extend attribute, you have to pass the class that you want to map, in this case, the Course, and the type of primary key of this entity, in this case, the Long
+
+```java
+
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface CourseSpringDataJpaRepository extends JpaRepository<Course, Long> {
+
+}
+
+```
+
+Now, let's create the command liner Runner
+
+```java
+@Component
+public class CourseSpringJpaCommandLineRunner implements CommandLineRunner {
+
+    @Autowired
+    private CourseSpringDataJpaRepository repository;
+
+    @Override
+    public void run(String... args) throws Exception {
+
+        System.out.println("Initiate Spring JPA Transactions");
+        repository.save(new Course(7, "Learn PHP", "in28minutes"));
+        repository.save(new Course(8, "Learn Javascript", "in28minutes"));
+        repository.save(new Course(9, "Learn Lua", "in28minutes"));
+
+        repository.deleteById(7l);
+
+        System.out.println(repository.findById(8l));
+        System.out.println(repository.findById(9l));
+        System.out.println("Finished Spring JPA Transactions");
+    }
+}
+```
+
+The Logs
+
+```
+Initiate Spring JPA Transactions
+Hibernate: select c1_0.id,c1_0.author,c1_0.name from course c1_0 where c1_0.id=?
+Hibernate: insert into course (author,name,id) values (?,?,?)
+Hibernate: select c1_0.id,c1_0.author,c1_0.name from course c1_0 where c1_0.id=?
+Hibernate: insert into course (author,name,id) values (?,?,?)
+Hibernate: select c1_0.id,c1_0.author,c1_0.name from course c1_0 where c1_0.id=?
+Hibernate: insert into course (author,name,id) values (?,?,?)
+Hibernate: select c1_0.id,c1_0.author,c1_0.name from course c1_0 where c1_0.id=?
+Hibernate: delete from course where id=?
+Hibernate: select c1_0.id,c1_0.author,c1_0.name from course c1_0 where c1_0.id=?
+Optional[Course{id=8, name='Learn Javascript', author='in28minutes'}]
+Hibernate: select c1_0.id,c1_0.author,c1_0.name from course c1_0 where c1_0.id=?
+Optional[Course{id=9, name='Learn Lua', author='in28minutes'}]
+Finished Spring JPA Transactions
 ```
