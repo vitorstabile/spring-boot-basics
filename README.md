@@ -26,6 +26,7 @@
 	- [Chapter 3 - Part 4: JPA vs Spring JPA](#chapter3part4)
 	- [Chapter 3 - Part 5: Manipulate Data Using JPA](#chapter3part5)
 	- [Chapter 3 - Part 6: Manipulate Data Using Spring JPA](#chapter3part6)
+	- [Chapter 3 - Part 7: Hibernate vs JPA](#chapter3part7)
 
 ## <a name="chapter1"></a>Chapter 1: Introducing Spring Boot
   
@@ -1343,7 +1344,7 @@ Course{id=6, name='Learn C#', author='in28minutes'}
 Finished JPA Transactions
 ```
 
-#### <a name="chapter3part5"></a>Chapter 3 - Part 6: Manipulate Data Using Spring JPA
+#### <a name="chapter3part6"></a>Chapter 3 - Part 6: Manipulate Data Using Spring JPA
 
 Let's make use of Spring JPA. We already make a map of the attributes in the class entity
 
@@ -1518,3 +1519,14 @@ public class CourseSpringJpaCommandLineRunner implements CommandLineRunner {
 [Course{id=2, name='Learn Java', author='in28minutes'}, Course{id=3, name='Learn C++', author='in28minutes'}, Course{id=5, name='Learn Rust', author='in28minutes'}, Course{id=6, name='Learn C#', author='in28minutes'}, Course{id=8, name='Learn Javascript', author='in28minutes'}, Course{id=9, name='Learn Lua', author='in28minutes'}]
 []
 Course{id=6, name='Learn C#', author='in28minutes'}
+```
+
+#### <a name="chapter3part7"></a>Chapter 3 - Part 7: Hibernate vs JPA
+
+- JPA defines the specification. It is an API.
+  - How do you define entities?
+  - How do you map attributes?
+  - Who manages the entities?
+- Hibernate is one of the popular implementations of JPA
+- Using Hibernate directly would result in a lock in to Hibernate
+  - There are other JPA implementations (Toplink, for example)
