@@ -29,6 +29,7 @@
 	- [Chapter 3 - Part 7: Hibernate vs JPA](#chapter3part7)
 4. [Chapter 4: Spring Security with Spring Boot](#chapter4)
 	- [Chapter 4 - Part 1: Security Fundamentals](#chapter4part1)
+	- [Chapter 4 - Part 2: Important Security Principles](#chapter4part2)
 
 ## <a name="chapter1"></a>Chapter 1: Introducing Spring Boot
   
@@ -1537,4 +1538,56 @@ Course{id=6, name='Learn C#', author='in28minutes'}
   
 #### <a name="chapter4part1"></a>Chapter 4 - Part 1: Security Fundamentals
 
+- In any ***system***:
+  - You have ***resources***
+    - A REST API, A Web Application, A Database, A resource in the cloud, ...
+  - You have ***identities***:
+    - Identities need to access to resources and perform actions
+      - For example: Execute a REST API call, Read/modify data in a database
+  - Key Questions:
+    - How to ***identify users***?
+    - How to configure resources they can access & actions that are allowed?
+	  
+- ***Authentication*** (is it the right user?)
+  - UserId/password (What do you remember?)
+  - Biometrics (What do you possess?)
+  
+- ***Authorization*** (do they have the right access?)
+  - User XYZ can only read data
+  - User ABC can read and update data
 
+#### <a name="chapter4part2"></a>Chapter 4 - Part 2: Important Security Principles
+
+- A chain is only as strong as its WEAKEST link
+  - Small security flaw makes an app with robust architecture vulnerable
+
+- ***6 Principles*** Of Building Secure Systems
+
+  - ***1***: Trust Nothing
+    - Validate every request
+	- Validate piece of data or information that comes into the system
+	
+  - ***2***: Assign Least Privileges
+    - Start the design of the system with security requirements in mind
+	- Have a clear picture of the user roles and accesses
+	- Assign Minimum Possible Privileges at all levels
+	  - Application
+	  - Infrastructure (database + server + ..)
+	  
+  - ***3***: Have Complete Mediation
+    - How were Medieval Fort's protected?
+	  - Everyone had to pass through one main gate
+	- Apply a well-implemented security filter. Test the role and access of each user.
+	
+  - ***4***: Have Defense In Depth
+    - Multiple levels of security
+	  - Transport, Network, Infrastructure
+	  - Operating System, Application, ..
+	  
+  - ***5***: Have Economy Of Mechanism
+    - Security architecture should be simple
+	- Simple systems are easier to protect
+	  
+  - ***6***: Ensure Openness Of Design
+    - Easier to identify and fix security flaws
+	- Opposite of the misplaced idea of "Security Through Obscurity"
