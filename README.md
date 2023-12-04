@@ -1616,7 +1616,7 @@ Course{id=6, name='Learn C#', author='in28minutes'}
    
 <br>
 
-	<div align="center"><img src="img/springmvc-w852-h178.png" width=852 height=178><br><sub>Dispatcher Server in Spring MVC - (<a href='https://github.com/vitorstabile'>Work by Vitor Garcia</a>) </sub></div>
+<div align="center"><img src="img/springmvc-w852-h178.png" width=852 height=178><br><sub>Dispatcher Server in Spring MVC - (<a href='https://github.com/vitorstabile'>Work by Vitor Garcia</a>) </sub></div>
 
 <br>
 
@@ -1629,7 +1629,7 @@ When we are building a REST Api in Spring, we are making use of Spring MVC in th
    
 <br>
 
-	<div align="center"><img src="img/springsecurity-w1144-h182.png" width=1144 height=182><br><sub>Dispatcher Server in Spring Security - (<a href='https://github.com/vitorstabile'>Work by Vitor Garcia</a>) </sub></div>
+<div align="center"><img src="img/springsecurity-w1144-h182.png" width=1144 height=182><br><sub>Dispatcher Server in Spring Security - (<a href='https://github.com/vitorstabile'>Work by Vitor Garcia</a>) </sub></div>
 
 <br>
 
