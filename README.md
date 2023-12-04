@@ -30,6 +30,8 @@
 4. [Chapter 4: Spring Security with Spring Boot](#chapter4)
 	- [Chapter 4 - Part 1: Security Fundamentals](#chapter4part1)
 	- [Chapter 4 - Part 2: Important Security Principles](#chapter4part2)
+	- [Chapter 4 - Part 3: How Spring Security Works](#chapter4part3)
+	- [Chapter 4 - Part 4: Config a New Spring Boot Project with Spring Security](#chapter4part4)
 
 ## <a name="chapter1"></a>Chapter 1: Introducing Spring Boot
   
@@ -1550,11 +1552,16 @@ Course{id=6, name='Learn C#', author='in28minutes'}
 	  
 - ***Authentication*** (is it the right user?)
   - UserId/password (What do you remember?)
+    - Ex: userId and Password of a LinkedIn Account, Gmail
   - Biometrics (What do you possess?)
+    - Ex: When you log into your gmail, a SMS is send to your mobile phone. A fingerprint is used to log in some accounts
+  - Can be done with both: UserId and Biometrics (Logging into a account and needs to confirm in a mobile phone)
   
 - ***Authorization*** (do they have the right access?)
   - User XYZ can only read data
   - User ABC can read and update data
+  
+  Ex: To board in a flight, you have a Passport with a Id, that authenticate that is you, and with your board pass, you have the authorization to flight in that plane
 
 #### <a name="chapter4part2"></a>Chapter 4 - Part 2: Important Security Principles
 
@@ -1591,3 +1598,89 @@ Course{id=6, name='Learn C#', author='in28minutes'}
   - ***6***: Ensure Openness Of Design
     - Easier to identify and fix security flaws
 	- Opposite of the misplaced idea of "Security Through Obscurity"
+
+#### <a name="chapter4part3"></a>Chapter 4 - Part 3: How Spring Security Works
+
+  - Security is the NO 1 priority for enterprises today!
+  - What is the most popular security project in the Spring eco-system?
+    - Spring Security: Protect your web applications, REST API and microservices
+	- Spring Security can be difficult to get started
+	  - Filter Chain
+	  - Authentication managers
+	  - Authentication providers
+	- BUT it provides a very flexible security system!
+	  - By default, everything is protected!
+	  - A chain of filters ensure proper authentication and authorization
+	  
+   ***How does Spring MVC Work?***
+   
+<br>
+
+	<div align="center"><img src="img/springmvc-w852-h178.png" width=852 height=178><br><sub>Dispatcher Server in Spring MVC - (<a href='https://github.com/vitorstabile'>Work by Vitor Garcia</a>) </sub></div>
+
+<br>
+
+When we are building a REST Api in Spring, we are making use of Spring MVC in the background. When we make a request in a API builded in Spring Boot, the request is first handler in the Dispatcher Servlet. The Dispatcher Servlet will looking to the URL, the request method and will route to the appropriate controller. DispatcherServlet acts as a friend controller and intercepts all the requests and routes to the right controller.
+
+  - DispatcherServlet acts as the front controller
+    - Intercepts all requests
+	- Routes to the Right Controller
+
+   
+<br>
+
+	<div align="center"><img src="img/springsecurity-w1144-h182.png" width=1144 height=182><br><sub>Dispatcher Server in Spring Security - (<a href='https://github.com/vitorstabile'>Work by Vitor Garcia</a>) </sub></div>
+
+<br>
+
+Springs security adds one more layer. All request is intercepted by the spring Security. There is a filter chain that you can configure and will intercept all the requests that comming in. Only when Spring Security checks all authentication and authorization, the request is send do DispatcherServlet and futher to the right controller.
+
+  - Spring security intercepts all requests
+
+  - Follows following security principle
+    - ***3***: Have Complete Mediation
+
+  - Spring security executes a series of filters
+    - Also called Spring Security Filter Chain
+	
+***What Spring Security Does?***
+
+  - Spring Security executes a series of filters
+  
+    - Filters provide these features:
+	  - ***Authentication***: Is it a valid user? (Ex: BasicAuthenticationFilter)
+	  - ***Authorization***: Does the user have right access?(Ex: AuthorizationFilter)
+	  - ***Other Features***:
+	    - Cross-Origin Resource Sharing (CORS) - CorsFilter
+		  - Should you allow AJAX calls from other domains?
+		- Cross Site Request Forgery (CSRF) - CsrfFilter
+		  - A malicious website making use of previous authentication on your website
+		  - Default: CSRF protection enabled for update requests - POST, PUT etc..
+		- Login Page, Logout Page
+		  - LogoutFilter, DefaultLoginPageGeneratingFilter, DefaultLogoutPageGeneratingFilter
+		- Translating exceptions into proper Http Responses (ExceptionTranslationFilter)
+	
+	- ***Order of filters*** is important (typical order shown below)
+	  - 1: Basic Check Filters - CORS, CSRF, ..
+	  - 2: Authentication Filters
+	  - 3: Authorization Filters
+
+#### <a name="chapter4part4"></a>Chapter 4 - Part 4: Config a New Spring Boot Project with Spring Security
+
+Go to [Spring Initializr](https://start.spring.io/) and select the following:
+
+- **Project**
+   - Maven Project
+- **Language**
+   - Java
+- **Spring Boot Version**
+   - For Java Version 8 -> Spring Boot 2.x
+   - For Java Version 17 -> Spring Boot 3.x
+- **Packaging**
+   - Jar
+- **Java**
+   - For Spring Boot 2.x -> Java Version 8
+   - For Spring Boot 3.x -> Java Version 8
+- **Dependencies**
+   - Spring Web -> To Construct Rest APIs
+   - Spring Security -> Framework to Authentication and Access control
