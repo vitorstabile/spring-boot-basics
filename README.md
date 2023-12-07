@@ -32,6 +32,8 @@
 	- [Chapter 4 - Part 2: Important Security Principles](#chapter4part2)
 	- [Chapter 4 - Part 3: How Spring Security Works](#chapter4part3)
 	- [Chapter 4 - Part 4: Config a New Spring Boot Project with Spring Security](#chapter4part4)
+	- [Chapter 4 - Part 5: Form Authentication](#chapter4part5)
+	- [Chapter 4 - Part 6: Basic Authentication](#chapter4part6)
 
 ## <a name="chapter1"></a>Chapter 1: Introducing Spring Boot
   
@@ -1664,7 +1666,29 @@ Springs security adds one more layer. All request is intercepted by the spring S
 	  - 1: Basic Check Filters - CORS, CSRF, ..
 	  - 2: Authentication Filters
 	  - 3: Authorization Filters
+	  
+***Default Spring Security Configuration***
 
+  - Everything is authenticated
+    - You can customize it further
+	
+  - ***Form authentication*** is enabled (with default form
+and logout features)
+
+  - ***Basic authentication*** is enabled
+  
+  - ***Test user*** is created
+    - Credentials printed in log (Username is ***user***)
+	
+  - ***CSRF protection*** is enabled
+  
+  - ***CORS requests*** are denied
+  
+  - ***X-Frame-Options*** is set to 0 (Frames are disabled)
+	
+	
+	
+	
 #### <a name="chapter4part4"></a>Chapter 4 - Part 4: Config a New Spring Boot Project with Spring Security
 
 Go to [Spring Initializr](https://start.spring.io/) and select the following:
@@ -1684,3 +1708,69 @@ Go to [Spring Initializr](https://start.spring.io/) and select the following:
 - **Dependencies**
    - Spring Web -> To Construct Rest APIs
    - Spring Security -> Framework to Authentication and Access control
+   
+#### <a name="chapter4part5"></a>Chapter 4 - Part 5: Form Authentication
+   
+Let's create a simple RestController
+
+
+```java
+@RestController
+public class HelloWorldResource {
+
+    @GetMapping("/hello-world")
+    public String helloWorld(){
+        return "Hello World";
+    }
+}
+```
+
+Start the program and when we try to access http://localhost:8080/hello-world, we will be redirect to http://localhost:8080/login and you will see this login page
+
+<br>
+
+<div align="center"><img src="img/loginpage-w1318-h625.png" width=1318 height=625><br><sub>Login Page - (<a href='https://github.com/vitorstabile'>Work by Vitor Garcia</a>) </sub></div>
+
+<br>
+
+Even if we put in the URL a now existing resource, Ex: http://localhost:8080/no-existing, the SPring Security will redirect us to the login page.
+
+The ***Form Based Authentication***
+
+  - Used by most web applications
+  - Uses a Session Cookie
+    - JSESSIONID: E2E693A57F6F7E4AC112A1BF4D40890A
+	- When you login, a session cookie is created
+    - Every request you made in the website, this cookie will be sent along with the request
+  - Spring security enables form based authentication ***by default***
+  - Provides a default ***Login Page***
+  - Provides a default ***Logout Page***
+  - Provides a ***/logout*** URL
+  - You can add a change password page
+    - (http.passwordManagement(Customizer.withDefaults()))
+
+To test, you can go to the logs in Spring Boot Application and search for the line
+
+```
+Using generated security password: 131476e7-49d9-411a-9738-f87850c817a
+```
+
+Paste the password in the password field, and use ```user``` as user name
+
+If youy inspect the web page, and enter in Network, you will that a session cookie was created
+
+<br>
+
+<div align="center"><img src="img/cookie-w535-h725.png" width=535 height=725><br><sub>Seesion Cookie - (<a href='https://github.com/vitorstabile'>Work by Vitor Garcia</a>) </sub></div>
+
+<br>
+
+If you tap http://localhost:8080/logout, a logout page will appear
+
+<br>
+
+<div align="center"><img src="img/logout-w732-h336.png" width=732 height=336><br><sub>Logout - (<a href='https://github.com/vitorstabile'>Work by Vitor Garcia</a>) </sub></div>
+
+<br>
+
+#### <a name="chapter4part6"></a>Chapter 4 - Part 6: Basic Authentication
