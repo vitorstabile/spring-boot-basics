@@ -1773,4 +1773,37 @@ If you tap http://localhost:8080/logout, a logout page will appear
 
 <br>
 
+To configure a user and password, go to ```application.properties``` and put this
+
+```
+spring.security.user.name=userexample
+spring.security.user.password=1234
+```
+
 #### <a name="chapter4part6"></a>Chapter 4 - Part 6: Basic Authentication
+
+  - Most basic option for Securing REST API
+    - BUT has many flaws
+	- NOT recommended for production use
+	
+  - Base 64 encoded username and password is sent as request header
+    - Authorization: Basic aW4yOG1pbnV0ZXM6ZHVtbXk=
+	- (DISADVANTAGE) Easy Decoding
+	
+  - Basic Auth Authorization Header:
+    - Does NOT contain authorization information (user access, roles,..)
+	- Does NOT have Expiry Date
+	
+	In the example, we are using the user name as ```userexample``` and password as ```1234```
+	
+	If we transform this in base 64, and make a GET call to the application, let's see what happennig.
+	
+	The curl command
+	
+	```
+	curl --header "Authorization:Basic dXNlcmV4YW1wbGU6MTIzNA==" http://localhost:8080/hello-world
+	
+	Response
+	Hello World
+	```
+	
