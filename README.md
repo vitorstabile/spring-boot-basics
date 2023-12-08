@@ -34,6 +34,7 @@
 	- [Chapter 4 - Part 4: Config a New Spring Boot Project with Spring Security](#chapter4part4)
 	- [Chapter 4 - Part 5: Form Authentication](#chapter4part5)
 	- [Chapter 4 - Part 6: Basic Authentication](#chapter4part6)
+	- [Chapter 4 - Part 7: Cross Site Request Forgery - CSRF](#chapter4part7)
 
 ## <a name="chapter1"></a>Chapter 1: Introducing Spring Boot
   
@@ -1806,4 +1807,246 @@ spring.security.user.password=1234
 	Response
 	Hello World
 	```
+
+#### <a name="chapter4part7"></a>Chapter 4 - Part 7: Cross Site Request Forgery - CSRF
+
+Let's imagine you will login in your bank account
+
+  - **Flow 1**: You are logged-in to your bank website
+    - A cookie Cookie-A is saved in the your web browser
 	
+  - **Flow 2**: You go to a malicious website without logging out from your bank account
+  
+  - **Flow 3**: The Malicious website executes a bank transfer without your knowledge using Cookie-A (The Cookie-A have your credentials)
+    - This thing is called  Cross Site Request Forgery - CSRF
+	
+  - How can you protect from CSRF?
+    - **Option 1**: Synchronizer token pattern
+	  - A token created for each request. To make a GET in the page and etc...
+	  - To make an update (POST, PUT, ..), you need a CSRF token from the previous request
+	  
+	- **Option 2**: SameSite cookie (Set-Cookie: SameSite=Strict)
+	  - application.properties
+	    - server.servlet.session.cookie.same-site=strict
+	  - Depends on browser support
+
+Let's make a test, using the same url to make a GET and a POST. We have this resource
+
+```
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+public class TodoResource {
+
+    private Logger logger = LoggerFactory.getLogger(getClass());
+    private static final List<Todo> TODOS_LIST = List.of(
+            new Todo("John", "HR"),
+            new Todo("Mike", "IT"));
+
+    @GetMapping("/todos")
+    public List<Todo> retrieveAllTodos() {
+        return TODOS_LIST;
+    }
+
+    @GetMapping("/users/{username}/todos")
+    public Todo retrieveTodosForSpecificUser(@PathVariable String username) {
+        Todo todoByUser = new Todo(null, null);
+        for (Todo todo : TODOS_LIST) {
+            String user = todo.username();
+            if (user.equals(username)) {
+                todoByUser = todo;
+            }
+        }
+        return todoByUser;
+    }
+
+    @PostMapping("/users/{username}/todos")
+    public void createTodoForSpecificUser (@PathVariable String username, @RequestBody Todo todo) {
+        logger.info("Create {} for {}", todo, username);
+    }
+}
+
+record Todo (String username, String description) {}
+```
+
+Now, let's make a GET request in Postman, in the URL http://localhost:8080/users/:username/todos
+
+<br>
+
+<div align="center"><img src="img/csrf1-w859-h586.png" width=859 height=586><br><sub>CSRF in Action - (<a href='https://github.com/vitorstabile'>Work by Vitor Garcia</a>) </sub></div>
+
+<br>
+
+If we try to make the same request, now, in a POST method in the URL http://localhost:8080/users/:username/todos, we will get a 401
+
+
+<br>
+
+<div align="center"><img src="img/csrf2-w873-h694.png" width=873 height=694><br><sub>CSRF in Action - (<a href='https://github.com/vitorstabile'>Work by Vitor Garcia</a>) </sub></div>
+
+<br>
+
+This is because, Spring Security by default, implement the CSRF Token, and to any update, this token is necessary.
+
+If we make go to the page http://localhost:8080/hello-world and put the username and password, and after, go to logout page http://localhost:8080/logout and inspect the page, in the html, we will see that is a method post that have the input name csrf with the value of token
+
+
+```html
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		<meta name="description" content="">
+		<meta name="author" content="">
+		<title>Confirm Log Out?</title>
+		<link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
+		<link href="https://getbootstrap.com/docs/4.0/examples/signin/signin.css" rel="stylesheet" integrity="sha384-oOE/3m0LUMPub4kaC09mrdEhIc+e3exm4xOGxAmuFXhBNF4hcg/6MiAXAf5p0P56" crossorigin="anonymous">
+	</head>
+	<body>
+		<div class="container">
+		  <form class="form-signin" method="post" action="/logout">
+			<h2 class="form-signin-heading">Are you sure you want to log out?</h2>
+				<input name="_csrf" type="hidden" value="BHbfT6F9HJndahC7GsEq6My2oYUE_JNlhsCUxZanz2S2AMXjMUW6e5FEJPjwDHHeLewe0P_SjLwzn6VItvGn9KbE-FyBNfCB">
+			<button class="btn btn-lg btn-primary btn-block" type="submit">Log Out</button>
+		  </form>
+		</div>
+	</body>
+</html>
+```
+
+By default, when you are building a web application, the Web Security is Active and in the Spring MVC or Thymeleaf, the csrf token is included by default
+
+How can we make this is REST API?
+
+First, Let's create a method to get the token
+
+```java
+@RestController
+public class SpringSecurityPlayResource {
+
+    @GetMapping("/csrf-token")
+    public CsrfToken retrieveCsrfToken(HttpServletRequest request){
+
+        return (CsrfToken) request.getAttribute("_csrf");
+    }
+}
+```
+
+Now, let's make a request to get the token. Make a call to the URL http://localhost:8080/csrf-token with your authentication
+
+<br>
+
+<div align="center"><img src="img/getCsrfToken-w880-h594.png" width=880 height=594><br><sub>Get CSRF Token - (<a href='https://github.com/vitorstabile'>Work by Vitor Garcia</a>) </sub></div>
+
+<br>
+
+With the token, let's put in the header, and try to make the POST http://localhost:8080/users/:username/todos
+
+<br>
+
+<div align="center"><img src="img/postWithCsrfToken-w884-h669.png" width=884 height=669><br><sub>Authorization with CSRF Token - (<a href='https://github.com/vitorstabile'>Work by Vitor Garcia</a>) </sub></div>
+
+<br>
+
+Was possible to make the post now, because we are using the CSRF Token
+
+Now, how to disable this CSRF token? In some scenarios, you want to disable the CSRF Token, because you have a Stateless API.
+
+If we go to the class ```SpringBootWebSecurityConfiguration.class``` we will see a method called ```SecurityFilterChain```
+
+```java
+ @Bean
+ @Order(2147483642)
+ SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
+            http.authorizeHttpRequests((requests) -> {
+                ((AuthorizeHttpRequestsConfigurer.AuthorizedUrl)requests.anyRequest()).authenticated();
+            });
+            http.formLogin(Customizer.withDefaults());
+            http.httpBasic(Customizer.withDefaults());
+            return (SecurityFilterChain)http.build();
+        }
+```
+
+We want to disable the CSRF, because he is executing as a filter chain. In the logs, we can see a log as ```o.s.s.web.DefaultSecurityFilterChain``` that is the filter chain that is executed.
+
+If we look to CSRF is this big log, we will see this Filter ```org.springframework.security.web.csrf.CsrfFilter@7f323b3a``` that is executing
+
+Let's create a Basic Auth Configuration class, and copy the method SecurityFilterChain
+
+```java
+@Configuration
+public class BasicAuthSecurityConfiguration {
+
+    @Bean
+    SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+
+        http.authorizeHttpRequests(auth -> {
+           auth.anyRequest().authenticated();
+        });
+        http.sessionManagement(
+                session -> session.sessionCreationPolicy(
+                        SessionCreationPolicy.STATELESS
+                )
+        );
+        http.httpBasic();
+        http.csrf().disable();
+        return http.build();
+    }
+}
+```
+
+Let's Analyse
+
+in this Part
+
+```
+http.authorizeHttpRequests(auth -> {
+           auth.anyRequest().authenticated();
+        });
+```
+
+We are saying that any request should be authenticated()
+
+In this Part
+
+```
+http.sessionManagement(
+                session -> session.sessionCreationPolicy(
+                        SessionCreationPolicy.STATELESS
+                )
+        );
+```
+
+Here, we are disable the sessionManagement, and telling that the session is Stateless. There no more login and logout
+
+In this part
+
+```
+http.httpBasic();
+http.csrf().disable();
+return http.build();
+```
+
+The authentication is basic, and we are disabling the csrf. In the end the http security will be return
+
+If we search for ```CsrfFilter```, will not appear in the Logs. Now, if we make the Post Request without the X-CSRF-TOKEN, we will be able to make
+
+<br>
+
+<div align="center"><img src="img/disablecsrf-w870-h660.png" width=870 height=660><br><sub>Disable CSRF Token - (<a href='https://github.com/vitorstabile'>Work by Vitor Garcia</a>) </sub></div>
+
+<br>
+
+Because we disable the ``` http.formLogin()```, if we go to http://localhost:8080/hello-world, will be show to us, the basic auth Login
+
+<br>
+
+<div align="center"><img src="img/basicloginpage-w984-h556.png" width=984 height=556><br><sub>Disable formLogin - (<a href='https://github.com/vitorstabile'>Work by Vitor Garcia</a>) </sub></div>
+
+<br>
+
+If we try to make a http://localhost:8080/logout, we will get a 404, because we disable the session
