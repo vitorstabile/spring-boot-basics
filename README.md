@@ -35,6 +35,7 @@
 	- [Chapter 4 - Part 5: Form Authentication](#chapter4part5)
 	- [Chapter 4 - Part 6: Basic Authentication](#chapter4part6)
 	- [Chapter 4 - Part 7: Cross Site Request Forgery - CSRF](#chapter4part7)
+	- [Chapter 4 - Part 8: Cross-Origin Resource Sharing - CORS](#chapter4part8)
 
 ## <a name="chapter1"></a>Chapter 1: Introducing Spring Boot
   
@@ -2050,3 +2051,31 @@ Because we disable the ``` http.formLogin()```, if we go to http://localhost:808
 <br>
 
 If we try to make a http://localhost:8080/logout, we will get a 404, because we disable the session
+
+#### <a name="chapter4part8"></a>Chapter 4 - Part 8: Cross-Origin Resource Sharing - CORS
+
+```java
+@Configuration
+public class BasicAuthSecurityConfiguration {
+
+	@Bean
+    public WebMvcConfigurer corsConfigurer() {
+        return new WebMvcConfigurer() {
+            public void addCorsMappings(CorsRegistry registry) {
+                registry.addMapping("/**")
+                        .allowedMethods("*")
+                        .allowedOrigins("http://localhost:3000");
+
+            }
+        };
+    }
+}
+```
+
+  - Browsers do NOT allow AJAX calls to resources outside current origin
+  - Cross-Origin Resource Sharing (CORS): Specification that allows you to configure which cross-domain requests are allowed
+    - Global Configuration
+	  - Configure addCorsMappings callback method in WebMvcConfigurer
+	- Local Configuration
+	  - @CrossOrigin - Allow from all origins
+	  - @CrossOrigin(origins = "https://www.in28minutes.com") - Allow from specific origin

@@ -6,6 +6,8 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 public class BasicAuthSecurityConfiguration {
@@ -14,7 +16,7 @@ public class BasicAuthSecurityConfiguration {
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
         http.authorizeHttpRequests(auth -> {
-           auth.anyRequest().authenticated();
+            auth.anyRequest().authenticated();
         });
         http.sessionManagement(
                 session -> session.sessionCreationPolicy(
@@ -24,5 +26,17 @@ public class BasicAuthSecurityConfiguration {
         http.httpBasic();
         http.csrf().disable();
         return http.build();
+    }
+
+    @Bean
+    public WebMvcConfigurer corsConfigurer() {
+        return new WebMvcConfigurer() {
+            public void addCorsMappings(CorsRegistry registry) {
+                registry.addMapping("/**")
+                        .allowedMethods("*")
+                        .allowedOrigins("http://localhost:3000");
+
+            }
+        };
     }
 }
