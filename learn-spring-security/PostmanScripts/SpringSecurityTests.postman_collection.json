@@ -7,6 +7,40 @@
 	},
 	"item": [
 		{
+			"name": "GetCSRFToken",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "1234",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "userexample",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/csrf-token",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"csrf-token"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "HelloWorld",
 			"request": {
 				"auth": {
@@ -135,7 +169,13 @@
 					]
 				},
 				"method": "POST",
-				"header": [],
+				"header": [
+					{
+						"key": "X-CSRF-TOKEN",
+						"value": "tOD5JWHZeyLJh_WG9qxas1msuYqjWrLAcRi7GSgAj8unrGw_0NDPFFLqSBHkvsGzxYFu0G_OlOiTPtDtQymPLxxi7PyWmV8L",
+						"type": "text"
+					}
+				],
 				"body": {
 					"mode": "raw",
 					"raw": "{\r\n    \"username\": \"John\",\r\n    \"description\": \"DevOps\"\r\n}",
@@ -160,7 +200,7 @@
 					"variable": [
 						{
 							"key": "username",
-							"value": "abc"
+							"value": "Mike"
 						}
 					]
 				}
