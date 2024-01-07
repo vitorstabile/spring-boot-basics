@@ -1840,6 +1840,82 @@ If we run the program and go to the H2 console, we will see the user table creat
 
 <br>
 
+#### <a name="chapter4part7"></a>Chapter 4 - Part 7: Create the User Repository Layer and a Configuration class to Test
+
+First, we need to create a Package called Repositories that will be responsible to do operations with the entity User in the database. To do, we need to create a interface UserRepository.
+
+```java
+package com.ecommerce.order.repositories;
+
+import com.ecommerce.order.entities.User;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface UserRepository extends package com.ecommerce.order.repositories;
+
+import com.ecommerce.order.entities.User;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface UserRepository extends JpaRepository<User, Long> {
+}<User, Long> {
+
+}
+```
+
+The interface ```UserRepository``` must extend the ```JpaRepository``` interface, and as a parameter, we need to put the entity that will be mapped in the database, in this case, the ```User``` class and the type of the Id of this class, in this case, must be a Long
+
+Now, let's create a test class, to be able to test if this Repository is mapping the user in the table user.
+
+First, we need to create a Configuration class, that in the start up of the project, this will be executated. We can do this using the ```Configuration``` annotation. 
+
+Antoher way why we use ```Configuration```, is when you utilize a 3rd party library (most of the time we do) and we need to have that library as a singleton, 
+then we declare it as bean using ```@Bean``` inside our ```@Configuration```, because we can't annotate a 3rd party library using ```@Component``` right?
+
+In this class, we will use the ```@Profile("test")``` annotation, telling to spring, when the profile in ```application.properties``` is in test, this will be executed
+
+```java
+package com.ecommerce.order.config;
+
+import com.ecommerce.order.entities.User;
+import com.ecommerce.order.repositories.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
+
+import java.util.Arrays;
+
+@Configuration
+@Profile("test")
+public class TestConfig implements CommandLineRunner {
+
+    @Autowired
+    private UserRepository repository;
+
+
+    @Override
+    public void run(String... args) throws Exception {
+        User u1 = new User(null, "Maria Brown", "maria@gmail.com", "988888888", "123456");
+        User u2 = new User(null, "Alex Green", "alex@gmail.com", "977777777", "123456");
+
+        repository.saveAll(Arrays.asList(u1,u2));
+    }
+}
+```
+
+To execute this save every time the application will start, we need to implement the interface ```CommandLineRunner```
+
+Now, we need to Inject the ```UserRepository```, because we will make use of the layer Repositorie and the operation.
+
+To test, save two objects of User and save them in the data base using the method saveAll.
+
+After this, we will have the two objects in the Database
+
+<br>
+
+<div align="center"><img src="img/usertablewithtwoobjects-w860-h439.png" width=860 height=439><br><sub>User Table with two objects - (<a href='https://github.com/vitorstabile'>Work by Vitor Garcia</a>) </sub></div>
+
+<br>
+
 ## <a name="chapter5"></a>Chapter 5: Spring Security with Spring Boot
   
 #### <a name="chapter5part1"></a>Chapter 5 - Part 1: Security Fundamentals
