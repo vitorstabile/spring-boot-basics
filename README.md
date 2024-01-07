@@ -2784,10 +2784,10 @@ import com.ecommerce.order.repositories.CategoryRepository;
         categoryRepository.saveAll(Arrays.asList(cat1,cat2,cat3));
 	
 }
-
+```
 	
 
-#### <a name="chapter4part14"></a>Chapter 4 - Part 13: Create the Product Repository, Service and resource
+#### <a name="chapter4part14"></a>Chapter 4 - Part 14: Create the Product Repository, Service and resource
 
 
 
