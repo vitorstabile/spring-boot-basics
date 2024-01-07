@@ -40,6 +40,8 @@
 	- [Chapter 4 - Part 10: Create the association Order](#chapter4part10)
 	- [Chapter 4 - Part 11: Create the Repository, Service and Resource Order](#chapter4part11)
 	- [Chapter 4 - Part 12: Create the Status Enum](#chapter4part12)
+	- [Chapter 4 - Part 13: Create the Category Repository, Service and resource](#chapter4part13)
+	- [Chapter 4 - Part 14: Create the Product Repository, Service and resource](#chapter4part14)
 5. [Chapter 5: Spring Security with Spring Boot](#chapter5)
     - [Chapter 5 - Part 1: Security Fundamentals](#chapter5part1)
     - [Chapter 5 - Part 2: Important Security Principles](#chapter5part2)
@@ -2612,6 +2614,180 @@ public class Order implements Serializable {
 	//same code
 	
 ```
+
+#### <a name="chapter4part13"></a>Chapter 4 - Part 13: Create the Category Repository, Service and resource
+
+Category Entity
+
+```java
+package com.ecommerce.order.entities;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.persistence.GenerationType;
+
+import java.io.Serializable;
+
+@Entity
+@Table(name = "tb_category")
+public class Category implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    private String name;
+
+    public Category() {
+    }
+
+    public Category(Long id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Category category)) return false;
+
+        return getId().equals(category.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return getId().hashCode();
+    }
+}
+```
+
+Category Repository
+
+```java
+package com.ecommerce.order.repositories;
+
+import com.ecommerce.order.entities.Category;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface CategoryRepository extends JpaRepository<Category, Long> {
+}
+```
+
+Category service
+
+```java
+package com.ecommerce.order.services;
+
+import com.ecommerce.order.entities.Category;
+import com.ecommerce.order.repositories.CategoryRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
+
+@Service
+public class CategoryService {
+
+    @Autowired
+    private CategoryRepository repository;
+
+    public List<Category> findAll() {
+        return repository.findAll();
+    }
+
+    public Category findById(Long id) {
+        Optional<Category> obj = repository.findById(id);
+        return obj.get();
+    }
+
+}
+```
+
+Category resource
+
+```java
+package com.ecommerce.order.resources;
+
+import com.ecommerce.order.entities.Category;
+import com.ecommerce.order.entities.Order;
+import com.ecommerce.order.services.CategoryService;
+import com.ecommerce.order.services.OrderService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
+
+@RestController
+@RequestMapping(value = "/categories")
+public class CategoryResource {
+
+    @Autowired
+    private CategoryService service;
+
+    @GetMapping
+    public ResponseEntity<List<Category>> findAll() {
+        List<Category> list = service.findAll();
+        return ResponseEntity.ok().body(list);
+    }
+
+    @GetMapping(value = "/{id}")
+    public ResponseEntity<Category> findById(@PathVariable Long id) {
+        Category obj = service.findById(id);
+        return ResponseEntity.ok().body(obj);
+    }
+
+}
+```
+
+Create the test Class
+
+```java
+import com.ecommerce.order.entities.Category;
+
+import com.ecommerce.order.repositories.CategoryRepository;
+
+	@Configuration
+	@Profile("test")
+	public class TestConfig implements CommandLineRunner {
+	
+		@Autowired
+		private CategoryRepository categoryRepository;
+	
+		Category cat1 = new Category(null, "Electronics");
+        Category cat2 = new Category(null, "Books");
+        Category cat3 = new Category(null, "Computers");
+
+        categoryRepository.saveAll(Arrays.asList(cat1,cat2,cat3));
+	
+}
+
+	
+
+#### <a name="chapter4part14"></a>Chapter 4 - Part 13: Create the Product Repository, Service and resource
 
 
 
