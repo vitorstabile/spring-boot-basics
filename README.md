@@ -1562,6 +1562,39 @@ Go to [Spring Initializr](https://start.spring.io/) and select the following:
    - For Spring Boot 3.x -> Java Version 17,21
 - **Dependencies**
    - Spring Web -> To Construct Rest APIs
+   
+   
+Download the project, and open use your IDE.
+
+After all dependencies is downloaded and loaded, execute the Spring Boot Application and check if the logs is ok.
+
+<br>
+
+<div align="center"><img src="img/orderapplicationstarted-w1833-h712.png" width=1833 height=712><br><sub>Order Application Running - (<a href='https://github.com/vitorstabile'>Work by Vitor Garcia</a>) </sub></div>
+
+<br>
+   
+#### <a name="chapter4part2"></a>Chapter 4 - Part 2: The Domain Model of Order Application and Architecture of the API
+
+**This is the Domain model of the application.**
+   
+<br>
+
+<div align="center"><img src="img/domainmodel-w1055-h409.png" width=1055 height=409><br><sub>Domain Model Order Application - (<a href='https://github.com/vitorstabile'>Work by Vitor Garcia</a>) </sub></div>
+
+<br>
+
+**The Architecture of our API will follow a Layer Architecture.**
+
+<br>
+
+<div align="center"><img src="img/apiarchitecture-w915-h551.png" width=551 height=409><br><sub>Layer API Architecture - (<a href='https://github.com/vitorstabile'>Work by Vitor Garcia</a>) </sub></div>
+
+<br>
+
+
+#### <a name="chapter4part3"></a>Chapter 4 - Part 3: Create the User Entity
+
 
 
 ## <a name="chapter5"></a>Chapter 5: Spring Security with Spring Boot
