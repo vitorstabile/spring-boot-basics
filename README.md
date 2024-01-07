@@ -2230,7 +2230,224 @@ public class User implements Serializable {
 
 #### <a name="chapter4part11"></a>Chapter 4 - Part 11: Create the Repository, Service and Resource Order
 
+Let's create the order Repository
 
+```java
+package com.ecommerce.order.repositories;
+
+import com.ecommerce.order.entities.Order;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface OrderRepository extends JpaRepository<Order, Long> {
+}
+```
+
+Now, create the order Service
+
+```java
+package com.ecommerce.order.services;
+
+import com.ecommerce.order.entities.Order;
+import com.ecommerce.order.repositories.OrderRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
+
+@Service
+public class OrderService {
+
+    @Autowired
+    private OrderRepository repository;
+
+    public List<Order> findAll() {
+        return repository.findAll();
+    }
+
+    public Order findById(Long id) {
+        Optional<Order> obj = repository.findById(id);
+        return obj.get();
+    }
+
+}
+```
+
+Now, create the order Resource
+
+```java
+package com.ecommerce.order.resources;
+
+import com.ecommerce.order.entities.Order;
+import com.ecommerce.order.services.OrderService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
+
+@RestController
+@RequestMapping(value = "/orders")
+public class OrderResource {
+
+    @Autowired
+    private OrderService service;
+
+    @GetMapping
+    public ResponseEntity<List<Order>> findAll() {
+        List<Order> list = service.findAll();
+        return ResponseEntity.ok().body(list);
+    }
+
+    @GetMapping(value = "/{id}")
+    public ResponseEntity<Order> findById(@PathVariable Long id) {
+        Order obj = service.findById(id);
+        return ResponseEntity.ok().body(obj);
+    }
+
+}
+```
+
+Now, create let's seed the order table
+
+```java
+package com.ecommerce.order.config;
+
+import com.ecommerce.order.entities.Order;
+import com.ecommerce.order.entities.User;
+import com.ecommerce.order.repositories.OrderRepository;
+import com.ecommerce.order.repositories.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
+
+import java.time.Instant;
+import java.util.Arrays;
+
+@Configuration
+@Profile("test")
+public class TestConfig implements CommandLineRunner {
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private OrderRepository orderRepository;
+
+    @Override
+    public void run(String... args) throws Exception {
+        User u1 = new User(null, "Maria Brown", "maria@gmail.com", "988888888", "123456");
+        User u2 = new User(null, "Alex Green", "alex@gmail.com", "977777777", "123456");
+
+        userRepository.saveAll(Arrays.asList(u1,u2));
+
+        Order o1 = new Order(null, Instant.parse("2019-06-20T19:53:07Z"), u1);
+        Order o2 = new Order(null, Instant.parse("2019-07-21T03:42:10Z"), u2);
+        Order o3 = new Order(null, Instant.parse("2019-07-22T15:21:22Z"), u1);
+
+        orderRepository.saveAll(Arrays.asList(o1, o2, o3));
+
+    }
+}
+```
+
+If we call a order, http://localhost:8080/orders/1 , will create a loop, because a order have a user, this user have a order, this order have a user and so on.
+
+This will case a ```java.lang.StackOverflowError:```
+
+```
+{"id":1,"moment":"2019-06-20T19:53:07Z",
+"user":{"id":1,"name":"Maria Brown","email":"maria@gmail.com","phone":"988888888","password":"123456",
+"orders":[{"id":1,"moment":"2019-06-20T19:53:07Z","user":{"id":1,"name":"Maria Brown","email":"maria@gmail.com","phone":"988888888","password":"123456",
+"orders":[{"id":1,"moment":"2019-06-20T19:53:07Z","user":{"id":1,"name":"Maria Brown","email":"maria@gmail.com","phone":"988888888","password":"123456",
+"orders":[{"id":1,"moment":"2019-06-20T19:53:07Z","user":{"id":1,"name":"Maria Brown","email":"maria@gmail.com","phone":"988888888","password":"123456",
+"orders":[{"id":1,"moment":"2019-06-20T19:53:07Z","user":{"id":1,"name":"Maria Brown","email":"maria@gmail.com","phone":"988888888","password":"123456",
+"orders":[{"id":1,"moment":"2019-06-20T19:53:07Z","user":{"id":1,"name":"Maria Brown","email":"maria@gmail.com","phone":"988888888","password":"123456",
+"orders":[{"id":1,"moment":"2019-06-20T19:53:07Z","user":{"id":1,"name":"Maria Brown","email":"maria@gmail.com","phone":"988888888","password":"123456",
+"orders":[{"id":1,"moment":"2019-06-20T19:53:07Z","user":{"id":1,"name":"Maria 
+```
+
+To avoid this, we need to use a annotation in one of the Relation of the entities, in this case is ```@JsonIgnore```
+
+```java
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+@Entity
+@Table(name = "tb_user")
+public class User implements Serializable {
+
+	// same code
+
+	@JsonIgnore
+    @OneToMany(mappedBy = "user")
+    private List<Order> orders = new ArrayList<>();
+	
+	// same code
+
+}
+
+```
+
+Now, if we make the call http://localhost:8080/orders/1, we will Have
+
+```
+{"id":1,"moment":"2019-06-20T19:53:07Z","user":{"id":1,"name":"Maria Brown","email":"maria@gmail.com","phone":"988888888","password":"123456"}}
+```
+
+If we make http://localhost:8080/users/1, we will Have
+
+```
+{"id":1,"name":"Maria Brown","email":"maria@gmail.com","phone":"988888888","password":"123456"}
+```
+
+When we have a association Many to one (Orders to a client), the JPA will load the association, but if we have One to Many, the JPA by default will not loaded because can cause a stack over flow error, and use the Lazy load
+oparation
+
+If we put the JsonIgnore annotation in the orders Entity
+
+```java
+import com.fasterxml.jackson.annotation.JsonIgnore
+
+
+@Entity
+@Table(name = "tb_order")
+public class Order implements Serializable {
+
+
+	// same code
+	
+	@JsonIgnore
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+	
+	// same code
+}
+```
+
+Now, if we make the call http://localhost:8080/orders/1, we will Have
+
+```
+{"id":1,"moment":"2019-06-20T19:53:07Z"}
+```
+
+If we make http://localhost:8080/users/1, we will Have
+
+```
+{"id":1,"name":"Maria Brown","email":"maria@gmail.com","phone":"988888888","password":"123456","orders":[{"id":1,"moment":"2019-06-20T19:53:07Z"},{"id":3,"moment":"2019-07-22T15:21:22Z"}]}
+```
+
+Another important is this config in the ```application.properties```
+
+```
+spring.jpa.open-in-view=true
+```
+
+This is used to create a serialization of the entity in the end of the life cicle when we call them
 
 ## <a name="chapter5"></a>Chapter 5: Spring Security with Spring Boot
   
