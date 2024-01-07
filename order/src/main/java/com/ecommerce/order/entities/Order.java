@@ -1,6 +1,7 @@
 package com.ecommerce.order.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.ecommerce.order.entities.enums.OrderStatus;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
@@ -22,6 +23,7 @@ public class Order implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'", timezone = "GMT")
     private Instant moment;
 
 
@@ -29,14 +31,17 @@ public class Order implements Serializable {
     @JoinColumn(name = "user_id")
     private User user;
 
+    private Integer orderStatus;
+
     public Order(){
 
     }
 
-    public Order(Long id, Instant moment, User user) {
+    public Order(Long id, Instant moment, User user, OrderStatus orderStatus) {
         this.id = id;
         this.moment = moment;
         this.user = user;
+        setOrderStatus(orderStatus);
     }
 
     public Long getId() {
@@ -61,6 +66,16 @@ public class Order implements Serializable {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public OrderStatus getOrderStatus() {
+        return OrderStatus.valueOf(orderStatus);
+    }
+
+    public void setOrderStatus(OrderStatus orderStatus) {
+        if(orderStatus != null) {
+            this.orderStatus = orderStatus.getCode();
+        }
     }
 
     @Override

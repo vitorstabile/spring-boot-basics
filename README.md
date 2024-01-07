@@ -39,6 +39,7 @@
 	- [Chapter 4 - Part 9: Create the resource to return a user by Id](#chapter4part9)
 	- [Chapter 4 - Part 10: Create the association Order](#chapter4part10)
 	- [Chapter 4 - Part 11: Create the Repository, Service and Resource Order](#chapter4part11)
+	- [Chapter 4 - Part 12: Create the Status Enum](#chapter4part12)
 5. [Chapter 5: Spring Security with Spring Boot](#chapter5)
     - [Chapter 5 - Part 1: Security Fundamentals](#chapter5part1)
     - [Chapter 5 - Part 2: Important Security Principles](#chapter5part2)
@@ -2448,6 +2449,171 @@ spring.jpa.open-in-view=true
 ```
 
 This is used to create a serialization of the entity in the end of the life cicle when we call them
+
+Now, let's format the moment attribute of the order, in the GMT time zone
+
+
+
+```java
+import com.fasterxml.jackson.annotation.JsonFormat;
+
+
+@Entity
+@Table(name = "tb_order")
+public class Order implements Serializable {
+
+
+	// same code
+	
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'", timezone = "GMT")
+    private Instant moment;
+	
+	// same code
+}
+```
+
+#### <a name="chapter4part12"></a>Chapter 4 - Part 12: Create the Status Enum
+
+Let's create the Enums package with the Enum OrderStatus
+
+
+```java
+package com.ecommerce.order.entities.enums;
+
+public enum OrderStatus {
+
+    WAITING_PAYMENT,
+    PAID,
+    SHIPPED,
+    DELIVERED,
+    CANCELED;
+}
+```
+
+Now, let's modify the entity class Order to add the Enum
+
+
+```java
+
+import com.ecommerce.order.entities.enums.OrderStatus;
+
+@Entity
+@Table(name = "tb_order")
+public class Order implements Serializable {
+
+	// same code
+	
+	private OrderStatus orderStatus;
+	
+	public Order(Long id, Instant moment, User user, OrderStatus orderStatus) {
+        this.id = id;
+        this.moment = moment;
+        this.user = user;
+        this.orderStatus = orderStatus;
+    }
+	
+	public OrderStatus getOrderStatus() {
+        return orderStatus;
+    }
+
+    public void setOrderStatus(OrderStatus orderStatus) {
+        this.orderStatus = orderStatus;
+    }
+	
+	//same code
+	
+}
+```
+
+Now, let's modify the TestConfig class
+
+```java
+
+@Configuration
+@Profile("test")
+public class TestConfig implements CommandLineRunner {
+
+	Order o1 = new Order(null, Instant.parse("2019-06-20T19:53:07Z"), u1, OrderStatus.PAID);
+    Order o2 = new Order(null, Instant.parse("2019-07-21T03:42:10Z"), u2, OrderStatus.WAITING_PAYMENT);
+    Order o3 = new Order(null, Instant.parse("2019-07-22T15:21:22Z"), u1, OrderStatus.WAITING_PAYMENT);
+
+
+}
+```
+
+Now, if we go to the table, the values of the status of the order is numbers. This occurred because the enums by default is add as numbers
+To avoid this, we need to implement a way to set the status based in the number that is in the Table
+
+
+```java
+package com.ecommerce.order.entities.enums;
+
+public enum OrderStatus {
+
+    WAITING_PAYMENT(1),
+    PAID(2),
+    SHIPPED(3),
+    DELIVERED(4),
+    CANCELED(5);
+
+    private int code;
+
+    private OrderStatus(int code) {
+        this.code = code;
+    }
+
+    public int getCode() {
+        return code;
+    }
+
+    public static OrderStatus valueOf(int code) {
+        for (OrderStatus value : OrderStatus.values()) {
+            if (value.getCode() == code) {
+                return value;
+            }
+        }
+        throw new IllegalArgumentException("Invalid OrderStatus Code");
+    }
+}
+```
+
+Now, we need to modify the order Class
+
+
+```java
+
+import com.ecommerce.order.entities.enums.OrderStatus;
+
+@Entity
+@Table(name = "tb_order")
+public class Order implements Serializable {
+
+		// same code
+	
+	private Integer orderStatus;
+	
+	public Order(Long id, Instant moment, User user, OrderStatus orderStatus) {
+        this.id = id;
+        this.moment = moment;
+        this.user = user;
+        setOrderStatus(orderStatus);
+    }
+	
+    public OrderStatus getOrderStatus() {
+        return OrderStatus.valueOf(orderStatus);
+    }
+
+    public void setOrderStatus(OrderStatus orderStatus) {
+        if(orderStatus != null) {
+            this.orderStatus = orderStatus.getCode();
+        }
+    }
+	
+	//same code
+	
+```
+
+
 
 ## <a name="chapter5"></a>Chapter 5: Spring Security with Spring Boot
   
