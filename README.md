@@ -1616,6 +1616,8 @@ import java.util.Objects;
 
 public class User implements Serializable {
 
+	private static final long serialVersionUID = 1L;
+
     private Long id;
 
     private String name;
@@ -1722,8 +1724,8 @@ public class UserResource {
 }
 ```
 
-In this resource, we will use the annotation @RestController to configure this class as a Rest Controller. The annotation @RequestMapping(value = "/users"), is the path to access the user resource.
-The @GetMapping, is used to configure this method as a Get method. The ResponseEntity class, is used to create and deal with Http operations over the Method.
+In this resource, we will use the annotation ```@RestController``` to configure this class as a Rest Controller. The annotation ```@RequestMapping(value = "/users")```, is the path to access the user resource.
+The ```@GetMapping```, is used to configure this method as a Get method. The ResponseEntity class, is used to create and deal with Http operations over the Method.
 
 Let's start the application, and access by http://localhost:8080/users
 
@@ -1783,7 +1785,60 @@ Enter in http://localhost:8080/h2-console and enter in connect
 
 #### <a name="chapter4part6"></a>Chapter 4 - Part 6: Create the JPA Mapping in Entity
 
+When a Entity will be mapped to JPA, we need to put in the class the Annotation ```@Entity```. This will configure the class as a entity to be mapped in a Database.
+When we will import this annotation, there is two import types: ```jakarta.persistence``` and ```org.hibernate.annotations```. The Jakarta, or Javax is the especification of JPA and Hibernate is the implementation of JPA.
+Always have preference to the especification, not the implementation, in this case, use Jakarta, or Javax.
 
+The ```@Table(name = "tb_user")``` will tell wich table this entity is to be mapped
+
+The ```@Id``` in the Id field is the Primary Key of the table.
+
+The ```@GeneratedValue(strategy = GenerationType.IDENTITY)``` in the Id field, generate automatic a Id to auto complete in the table
+
+
+```java
+package com.ecommerce.order.entities;
+
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.persistence.GenerationType;
+
+
+import java.io.Serializable;
+import java.util.Objects;
+
+@Entity
+@Table(name = "tb_user")
+public class User implements Serializable {
+    private static final long serialVersionUID = 1L;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String name;
+
+    private String email;
+
+    private String phone;
+
+    private String password;
+	
+	// same code
+
+}
+```
+
+If we run the program and go to the H2 console, we will see the user table created
+
+<br>
+
+<div align="center"><img src="img/usertable-w1044-h551.png" width=1044 height=551><br><sub>User Table - (<a href='https://github.com/vitorstabile'>Work by Vitor Garcia</a>) </sub></div>
+
+<br>
 
 ## <a name="chapter5"></a>Chapter 5: Spring Security with Spring Boot
   
