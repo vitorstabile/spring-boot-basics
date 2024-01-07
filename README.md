@@ -1735,6 +1735,54 @@ The output will be the json Object
 
 #### <a name="chapter4part5"></a>Chapter 4 - Part 5: Set up the H2 database to Test
 
+To set up your H2 databse, put this dependecies in our pom.xml file
+
+```
+<dependency>
+	<groupId>org.springframework.boot</groupId>
+	<artifactId>spring-boot-starter-data-jpa</artifactId>
+</dependency>
+
+<dependency>
+	<groupId>com.h2database</groupId>
+	<artifactId>h2</artifactId>
+	<scope>runtime</scope>
+</dependency>
+```
+
+Now, we need to put in our ```application.properties``` the profile of our application. In this case, we will use as test
+
+```
+spring.profiles.active=test
+spring.jpa.open-in-view=true
+```
+
+Now, let's create a ```application-test.properties``` to put our H2 config
+
+```
+# DATASOURCE 
+spring.datasource.driverClassName=org.h2.Driver
+spring.datasource.url=jdbc:h2:mem:testdb
+spring.datasource.username=sa
+spring.datasource.password=
+
+# H2 CLIENT 
+spring.h2.console.enabled=true
+spring.h2.console.path=/h2-console
+
+# JPA, SQL 
+spring.jpa.database-platform=org.hibernate.dialect.H2Dialect
+spring.jpa.defer-datasource-initialization=true
+spring.jpa.show-sql=true
+spring.jpa.properties.hibernate.format_sql=true
+```
+
+Now, let's test our H2 Database
+
+Enter in http://localhost:8080/h2-console and enter in connect
+
+#### <a name="chapter4part6"></a>Chapter 4 - Part 6: Create the JPA Mapping in Entity
+
 
 
 ## <a name="chapter5"></a>Chapter 5: Spring Security with Spring Boot
