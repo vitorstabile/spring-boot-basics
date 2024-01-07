@@ -34,7 +34,10 @@
 	- [Chapter 4 - Part 4: Create a resource to test](#chapter4part4)
 	- [Chapter 4 - Part 5: Set up the H2 database to Test](#chapter4part5)
 	- [Chapter 4 - Part 6: Create the JPA Mapping in Entity](#chapter4part6)
-	- [Chapter 4 - Part 7: CCreate the User Repository Layer and a Configuration class to Test](#chapter4part7)
+	- [Chapter 4 - Part 7: Create the User Repository Layer and a Configuration class to Test](#chapter4part7)
+	- [Chapter 4 - Part 8: Create the User Service Layer](#chapter4part8)
+	- [Chapter 4 - Part 9: Create the resource to return a user by Id](#chapter4part9)
+	- [Chapter 4 - Part 10: Create the association Order](#chapter4part10)
 5. [Chapter 5: Spring Security with Spring Boot](#chapter5)
     - [Chapter 5 - Part 1: Security Fundamentals](#chapter5part1)
     - [Chapter 5 - Part 2: Important Security Principles](#chapter5part2)
@@ -1921,6 +1924,158 @@ After this, we will have the two objects in the Database
 <div align="center"><img src="img/usertablewithtwoobjects-w860-h439.png" width=860 height=439><br><sub>User Table with two objects - (<a href='https://github.com/vitorstabile'>Work by Vitor Garcia</a>) </sub></div>
 
 <br>
+
+#### <a name="chapter4part8"></a>Chapter 4 - Part 8: Create the User Service Layer
+
+Now, let's create the service layer that will be responsible to executa the bussiness logic of the Application. 
+This Layer will have a dependencie of the Repository Layer, so, we need to inject the Repository layer in this Service Layer
+
+First, use the annotation ```@Service``` to tell spring this will be managed by Spring.
+
+Now, use the ```@Autowired``` to inject the repository in this layer and create a method to return a List of users
+
+```java
+package com.ecommerce.order.services;
+
+import com.ecommerce.order.entities.User;
+import com.ecommerce.order.repositories.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+public class UserService {
+
+    @Autowired
+    private UserRepository repository;
+
+    public List<User> findAll() {
+        return repository.findAll();
+    }
+
+}
+```
+
+Now, we need to modify our Resource layer, to use the service layer and return a list of users
+
+```java
+package com.ecommerce.order.resources;
+
+import com.ecommerce.order.entities.User;
+import com.ecommerce.order.services.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
+
+@RestController
+@RequestMapping(value = "/users")
+public class UserResource {
+
+    @Autowired
+    private UserService service;
+
+    @GetMapping
+    public ResponseEntity<List<User>> findAll() {
+        List<User> list = service.findAll();
+        return ResponseEntity.ok().body(list);
+    }
+
+}
+```
+
+#### <a name="chapter4part9"></a>Chapter 4 - Part 9: Create the resource to return a user by Id
+
+Now, let's implement another method to return a User by Id.
+
+In the service layer, create this method
+
+```java
+package com.ecommerce.order.services;
+
+import com.ecommerce.order.entities.User;
+import com.ecommerce.order.repositories.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
+
+@Service
+public class UserService {
+
+	@Autowired
+    private UserRepository repository;
+
+	// same code
+	
+	public User findById(Long id) {
+        Optional<User> obj = repository.findById(id);
+        return obj.get();
+    }
+
+}
+```
+
+The Optional class in Java 8 is a container object which is used to contain a value that might or might not be present. 
+It was introduced as a way to help reduce the number of NullPointerExceptions that occur in Java code.
+
+One of the key benefits of using Optional is that it forces you to handle the case where the value is absent. 
+This means that you are less likely to miss important checks in your code and reduces the risk of NullPointerException. 
+If a value is not present, you can either provide a default value or throw an exception.
+
+Now, let's implement in the Resource class
+
+We need to put another ```@GetMapping``` annotation, but now, we need to pass a id in the resource. To do, we need to use this annotation with ``` @GetMapping(value = "/{id}")```
+Now, we need to use the annotation ```@PathVariable``` in the method input, to tell Spring this Id will come from the resource url
+
+
+```java
+package com.ecommerce.order.resources;
+
+import com.ecommerce.order.entities.User;
+import com.ecommerce.order.services.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
+
+@RestController
+@RequestMapping(value = "/users")
+public class UserResource {
+
+	//same code
+
+	@Autowired
+    private UserService service;
+
+	@GetMapping(value = "/{id}")
+    public ResponseEntity<User> findById(@PathVariable Long id) {
+        User obj = service.findById(id);
+        return ResponseEntity.ok().body(obj);
+    }
+
+}
+
+```
+
+To test, make a curl using http://localhost:8080/users/1
+
+to output will Be
+
+```
+{"id":1,"name":"Maria Brown","email":"maria@gmail.com","phone":"988888888","password":"123456"}
+```
+
+#### <a name="chapter4part10"></a>Chapter 4 - Part 10: Create the association Order
 
 ## <a name="chapter5"></a>Chapter 5: Spring Security with Spring Boot
   
