@@ -38,6 +38,7 @@
 	- [Chapter 4 - Part 8: Create the User Service Layer](#chapter4part8)
 	- [Chapter 4 - Part 9: Create the resource to return a user by Id](#chapter4part9)
 	- [Chapter 4 - Part 10: Create the association Order](#chapter4part10)
+	- [Chapter 4 - Part 11: Create the Repository, Service and Resource Order](#chapter4part11)
 5. [Chapter 5: Spring Security with Spring Boot](#chapter5)
     - [Chapter 5 - Part 1: Security Fundamentals](#chapter5part1)
     - [Chapter 5 - Part 2: Important Security Principles](#chapter5part2)
@@ -2076,6 +2077,160 @@ to output will Be
 ```
 
 #### <a name="chapter4part10"></a>Chapter 4 - Part 10: Create the association Order
+
+Now, let's create the entity order.
+
+```java
+package com.ecommerce.order.entities;
+
+import java.io.Serializable;
+import java.time.Instant;
+
+public class Order implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+
+    private Long id;
+
+    private Instant moment;
+
+
+    private User user;
+
+    public Order(){
+
+    }
+
+    public Order(Long id, Instant moment, User user) {
+        this.id = id;
+        this.moment = moment;
+        this.user = user;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Instant getMoment() {
+        return moment;
+    }
+
+    public void setMoment(Instant moment) {
+        this.moment = moment;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Order order)) return false;
+
+        return getId().equals(order.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return getId().hashCode();
+    }
+}
+```
+
+Now, let's put the tables annotation. Because a Order have a association with the entity User, we need to use the annotation in the attribut user ```@ManyToOne```.
+When we retrieve the user associated with the order, we need to make a join, so, we need to use the annotation ```@JoinColumn(name = "client_id")``` with the value of the foreign key that will be used to make the join
+
+```java
+package com.ecommerce.order.entities;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.GenerationType;
+
+import java.io.Serializable;
+import java.time.Instant;
+
+@Entity
+@Table(name = "tb_order")
+public class Order implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private Instant moment;
+
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+	
+	//same code
+
+}
+```
+
+Now, we need to do the same thing in the User. 
+
+We need to create the Order association and put the annotation ```@OneToMany(mappedBy = "user")```
+
+We need to use the annotation ```@OneToMany(mappedBy = "user")``` and pass what class will be mapped, in this case, will be order
+
+```java
+
+package com.ecommerce.order.entities;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.GenerationType;
+
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+
+@Entity
+@Table(name = "tb_user")
+public class User implements Serializable {
+
+	//same code
+
+	@OneToMany(mappedBy = "user")
+    private List<Order> orders = new ArrayList<>();
+	
+	//same code
+	
+	public List<Order> getOrders() {
+        return orders;
+    }
+	
+	//same code
+}
+
+```
+
+#### <a name="chapter4part11"></a>Chapter 4 - Part 11: Create the Repository, Service and Resource Order
+
+
 
 ## <a name="chapter5"></a>Chapter 5: Spring Security with Spring Boot
   
