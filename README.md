@@ -20,22 +20,24 @@
     - [Chapter 2 - Part 10: Actuator in SpringBoot](#chapter2part10)
     - [Chapter 2 - Part 11: Understanding Spring Boot - Spring - Spring MVC](#chapter2part11)
 3. [Chapter 3: JPA and Hibernate with Spring Boot](#chapter3)
-    - [Chapter 3 - Part 1: Config a New Spring Boot Project with JPA and Hibernate](#chapter3part1)
+    	- [Chapter 3 - Part 1: Config a New Spring Boot Project with JPA and Hibernate](#chapter3part1)
 	- [Chapter 3 - Part 2: JDBC vs Spring JDBC](#chapter3part2)
 	- [Chapter 3 - Part 3: Manipulate Data Using Spring JDBC](#chapter3part3)
 	- [Chapter 3 - Part 4: JPA vs Spring JPA](#chapter3part4)
 	- [Chapter 3 - Part 5: Manipulate Data Using JPA](#chapter3part5)
 	- [Chapter 3 - Part 6: Manipulate Data Using Spring JPA](#chapter3part6)
 	- [Chapter 3 - Part 7: Hibernate vs JPA](#chapter3part7)
-4. [Chapter 4: Spring Security with Spring Boot](#chapter4)
-	- [Chapter 4 - Part 1: Security Fundamentals](#chapter4part1)
-	- [Chapter 4 - Part 2: Important Security Principles](#chapter4part2)
-	- [Chapter 4 - Part 3: How Spring Security Works](#chapter4part3)
-	- [Chapter 4 - Part 4: Config a New Spring Boot Project with Spring Security](#chapter4part4)
-	- [Chapter 4 - Part 5: Form Authentication](#chapter4part5)
-	- [Chapter 4 - Part 6: Basic Authentication](#chapter4part6)
-	- [Chapter 4 - Part 7: Cross Site Request Forgery - CSRF](#chapter4part7)
-	- [Chapter 4 - Part 8: Cross-Origin Resource Sharing - CORS](#chapter4part8)
+4. [Chapter 4: Create RESTful API with Spring Boot](#chapter4)
+    	- [Chapter 4 - Part 1: Config a New Spring Boot Project](#chapter4part1)
+5. [Chapter 5: Spring Security with Spring Boot](#chapter5)
+	- [Chapter 5 - Part 1: Security Fundamentals](#chapter5part1)
+	- [Chapter 5 - Part 2: Important Security Principles](#chapter5part2)
+	- [Chapter 5 - Part 3: How Spring Security Works](#chapter5part3)
+	- [Chapter 5 - Part 4: Config a New Spring Boot Project with Spring Security](#chapter5part4)
+	- [Chapter 5 - Part 5: Form Authentication](#chapter5part5)
+	- [Chapter 5 - Part 6: Basic Authentication](#chapter5part6)
+	- [Chapter 5 - Part 7: Cross Site Request Forgery - CSRF](#chapter5part7)
+	- [Chapter 5 - Part 8: Cross-Origin Resource Sharing - CORS](#chapter5part8)
 
 ## <a name="chapter1"></a>Chapter 1: Introducing Spring Boot
   
@@ -1539,10 +1541,32 @@ Course{id=6, name='Learn C#', author='in28minutes'}
 - Hibernate is one of the popular implementations of JPA
 - Using Hibernate directly would result in a lock in to Hibernate
   - There are other JPA implementations (Toplink, for example)
-
-## <a name="chapter4"></a>Chapter 4: Spring Security with Spring Boot
+ 
+## <a name="chapter4"></a>Chapter 4:  Create RESTful API with Spring Boot
   
-#### <a name="chapter4part1"></a>Chapter 4 - Part 1: Security Fundamentals
+#### <a name="chapter4part1"></a>Chapter 4 - Part 1: Config a New Spring Boot Project
+
+Go to [Spring Initializr](https://start.spring.io/) and select the following:
+
+- **Project**
+   - Maven Project
+- **Language**
+   - Java
+- **Spring Boot Version**
+   - For Java Version 8 -> Spring Boot 2.x
+   - For Java Version 17 -> Spring Boot 3.x
+- **Packaging**
+   - Jar
+- **Java**
+   - For Spring Boot 2.x -> Java Version 8
+   - For Spring Boot 3.x -> Java Version 17,21
+- **Dependencies**
+   - Spring Web -> To Construct Rest APIs
+
+
+## <a name="chapter5"></a>Chapter 5: Spring Security with Spring Boot
+  
+#### <a name="chapter5part1"></a>Chapter 5 - Part 1: Security Fundamentals
 
 - In any ***system***:
   - You have ***resources***
@@ -1567,7 +1591,7 @@ Course{id=6, name='Learn C#', author='in28minutes'}
   
   Ex: To board in a flight, you have a Passport with a Id, that authenticate that is you, and with your board pass, you have the authorization to flight in that plane
 
-#### <a name="chapter4part2"></a>Chapter 4 - Part 2: Important Security Principles
+#### <a name="chapter5part2"></a>Chapter 5 - Part 2: Important Security Principles
 
 - A chain is only as strong as its WEAKEST link
   - Small security flaw makes an app with robust architecture vulnerable
@@ -1603,7 +1627,7 @@ Course{id=6, name='Learn C#', author='in28minutes'}
     - Easier to identify and fix security flaws
 	- Opposite of the misplaced idea of "Security Through Obscurity"
 
-#### <a name="chapter4part3"></a>Chapter 4 - Part 3: How Spring Security Works
+#### <a name="chapter5part3"></a>Chapter 5 - Part 3: How Spring Security Works
 
   - Security is the NO 1 priority for enterprises today!
   - What is the most popular security project in the Spring eco-system?
@@ -1691,7 +1715,7 @@ and logout features)
 	
 	
 	
-#### <a name="chapter4part4"></a>Chapter 4 - Part 4: Config a New Spring Boot Project with Spring Security
+#### <a name="chapter5part4"></a>Chapter 5 - Part 4: Config a New Spring Boot Project with Spring Security
 
 Go to [Spring Initializr](https://start.spring.io/) and select the following:
 
@@ -1706,12 +1730,12 @@ Go to [Spring Initializr](https://start.spring.io/) and select the following:
    - Jar
 - **Java**
    - For Spring Boot 2.x -> Java Version 8
-   - For Spring Boot 3.x -> Java Version 8
+   - For Spring Boot 3.x -> Java Version 17,21
 - **Dependencies**
    - Spring Web -> To Construct Rest APIs
    - Spring Security -> Framework to Authentication and Access control
    
-#### <a name="chapter4part5"></a>Chapter 4 - Part 5: Form Authentication
+#### <a name="chapter5part5"></a>Chapter 5 - Part 5: Form Authentication
    
 Let's create a simple RestController
 
@@ -1782,7 +1806,7 @@ spring.security.user.name=userexample
 spring.security.user.password=1234
 ```
 
-#### <a name="chapter4part6"></a>Chapter 4 - Part 6: Basic Authentication
+#### <a name="chapter5part6"></a>Chapter 5 - Part 6: Basic Authentication
 
   - Most basic option for Securing REST API
     - BUT has many flaws
@@ -1809,7 +1833,7 @@ spring.security.user.password=1234
 	Hello World
 	```
 
-#### <a name="chapter4part7"></a>Chapter 4 - Part 7: Cross Site Request Forgery - CSRF
+#### <a name="chapter5part7"></a>Chapter 5 - Part 7: Cross Site Request Forgery - CSRF
 
 Let's imagine you will login in your bank account
 
@@ -2052,7 +2076,7 @@ Because we disable the ``` http.formLogin()```, if we go to http://localhost:808
 
 If we try to make a http://localhost:8080/logout, we will get a 404, because we disable the session
 
-#### <a name="chapter4part8"></a>Chapter 4 - Part 8: Cross-Origin Resource Sharing - CORS
+#### <a name="chapter5part8"></a>Chapter 5 - Part 8: Cross-Origin Resource Sharing - CORS
 
 ```java
 @Configuration
