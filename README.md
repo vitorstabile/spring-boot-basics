@@ -1595,6 +1595,146 @@ After all dependencies is downloaded and loaded, execute the Spring Boot Applica
 
 #### <a name="chapter4part3"></a>Chapter 4 - Part 3: Create the User Entity
 
+The first entity we will create, is the User entity. To do, we first need to create a package named entities, with the name of the entitie as User.
+
+Now, to create a Entitie, we need to follow this checklist
+
+**Basic entity checklist:** 
+  - Basic attributes - All the attributes that is listed in the domain model
+  - Associations (instantiate collections) - If have Associations, create them
+  - Constructors - The basic constructor
+  - Getters & Setters (collections: only get) - The getters and setters methods
+  - hashCode & equals - To override the equals methods
+  - Serializable - To implement the interface Serilizable to do opperations to transform the entitie in bytes to traffegate over internet and save the object in files
+  
+  
+ ```java
+ package com.ecommerce.order.entities;
+
+import java.io.Serializable;
+import java.util.Objects;
+
+public class User implements Serializable {
+
+    private Long id;
+
+    private String name;
+
+    private String email;
+
+    private String phone;
+
+    private String password;
+
+    public User() {
+
+    }
+
+    public User(Long id, String name, String email, String phone, String password) {
+        this.id = id;
+        this.name = name;
+        this.email = email;
+        this.phone = phone;
+        this.password = password;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof User user)) return false;
+        return Objects.equals(getId(), user.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId());
+    }
+
+}
+```
+
+#### <a name="chapter4part4"></a>Chapter 4 - Part 4: Create a resource to test
+
+After we created our entity, is necessary to create a way to test if the class is correted implemented. Let's create a resource class UserResource, to test our requisition
+
+
+```java
+package com.ecommerce.order.resources;
+
+import com.ecommerce.order.entities.User;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequestMapping(value = "/users")
+public class UserResource {
+
+    @GetMapping
+    public ResponseEntity<User> findAll() {
+        User user = new User
+                (1000L, "John", "john@gmail.com", "999999", "123456");
+
+        return ResponseEntity.ok().body(user);
+    }
+
+}
+```
+
+In this resource, we will use the annotation @RestController to configure this class as a Rest Controller. The annotation @RequestMapping(value = "/users"), is the path to access the user resource.
+The @GetMapping, is used to configure this method as a Get method. The ResponseEntity class, is used to create and deal with Http operations over the Method.
+
+Let's start the application, and access by http://localhost:8080/users
+
+The output will be the json Object
+
+```
+{"id":1000,"name":"John","email":"john@gmail.com","phone":"999999","password":"123456"}
+```
+
+#### <a name="chapter4part5"></a>Chapter 4 - Part 5: Set up the H2 database to Test
+
 
 
 ## <a name="chapter5"></a>Chapter 5: Spring Security with Spring Boot
