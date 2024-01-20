@@ -3560,6 +3560,142 @@ If we remove the ```@JsonIgnore``` at getProduct() in OrderItem and put in getOr
 
 ```
 
+#### <a name="chapter4part16"></a>Chapter 4 - Part 17: Create the Payment Entity and Relation One-to-one with Order
+
+First, lets create the association Payment in Order class. Because the Payment and Order will have the same Id, we can use a annotation
+with ```@OneToOne``` with ```cascade = CascadeType.ALL```. If the Order have id 5, the Payment will have the id 5.
+
+```java
+
+@Entity
+@Table(name = "tb_order")
+public class Order implements Serializable {
+
+	//same code
+
+	@OneToOne(mappedBy = "order", cascade = CascadeType.ALL)
+	private Payment payment;
+	
+	
+	// same code
+	
+	public Payment getPayment() {
+        return payment;
+    }
+
+    public void setPayment(Payment payment) {
+        this.payment = payment;
+    }
+
+	//same code
+}
+
+```
+
+Now, let's create the Payment Entity. Because the order can enter in the BD without a payment associated with him, we can make use of annotation ```@OneToOne``` and ```MapsId``` to map the Id of the order.
+
+@MapsId annotation in Hibernate is used to obtain a one-to-one relationship between two entities by mapping the primary key of one entity to the foreign key of another entity.  
+This annotation is used when we have to use a shared primary key between two entities. 
+
+
+```java
+
+package com.ecommerce.order.entities;
+
+import jakarta.persistence.*;
+
+import java.io.Serializable;
+import java.time.Instant;
+
+@Entity
+@Table(name = "tb_payment")
+public class Payment implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private Instant moment;
+
+    @OneToOne
+    @MapsId
+    private Order order;
+
+    public Payment() {
+
+    }
+
+    public Payment(Long id, Instant moment, Order order) {
+        this.id = id;
+        this.moment = moment;
+        this.order = order;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Instant getMoment() {
+        return moment;
+    }
+
+    public void setMoment(Instant moment) {
+        this.moment = moment;
+    }
+
+    public Order getOrder() {
+        return order;
+    }
+
+    public void setOrder(Order order) {
+        this.order = order;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Payment payment)) return false;
+
+        return getId() != null ? getId().equals(payment.getId()) : payment.getId() == null;
+    }
+    @Override
+    public int hashCode() {
+        return getId() != null ? getId().hashCode() : 0;
+    }
+}
+
+```
+
+Now, let's test this. Let's associate a Payment to a order. First, create the payment, after associate the Payment to a order, and after, save again in the database.
+
+```java
+
+@Configuration
+@Profile("test")
+public class TestConfig implements CommandLineRunner {
+
+	@Override
+    public void run(String... args) throws Exception {
+	
+	//same code
+	
+	Payment pay1 = new Payment(null, Instant.parse("2019-06-20T21:53:07Z"), o1);
+	o1.setPayment(pay1);
+
+	orderRepository.save(o1);
+	
+	}
+
+}
+
+```
+
 ## <a name="chapter5"></a>Chapter 5: Spring Security with Spring Boot
   
 #### <a name="chapter5part1"></a>Chapter 5 - Part 1: Security Fundamentals
