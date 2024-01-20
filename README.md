@@ -37,11 +37,13 @@
 	- [Chapter 4 - Part 7: Create the User Repository Layer and a Configuration class to Test](#chapter4part7)
 	- [Chapter 4 - Part 8: Create the User Service Layer](#chapter4part8)
 	- [Chapter 4 - Part 9: Create the resource to return a user by Id](#chapter4part9)
-	- [Chapter 4 - Part 10: Create the association Order](#chapter4part10)
+	- [Chapter 4 - Part 10: Create the association Order Many-to-One (User and Order)](#chapter4part10)
 	- [Chapter 4 - Part 11: Create the Repository, Service and Resource Order](#chapter4part11)
 	- [Chapter 4 - Part 12: Create the Status Enum](#chapter4part12)
 	- [Chapter 4 - Part 13: Create the Category Repository, Service and resource](#chapter4part13)
 	- [Chapter 4 - Part 14: Create the Product Repository, Service and resource](#chapter4part14)
+	- [Chapter 4 - Part 15: Many-to-Many relation and JoinTable (Category and Product)](#chapter4part15)
+	- [Chapter 4 - Part 16: Many-to-Many relation with extra data (Product and Order)](#chapter4part16)
 5. [Chapter 5: Spring Security with Spring Boot](#chapter5)
     - [Chapter 5 - Part 1: Security Fundamentals](#chapter5part1)
     - [Chapter 5 - Part 2: Important Security Principles](#chapter5part2)
@@ -2079,7 +2081,7 @@ to output will Be
 {"id":1,"name":"Maria Brown","email":"maria@gmail.com","phone":"988888888","password":"123456"}
 ```
 
-#### <a name="chapter4part10"></a>Chapter 4 - Part 10: Create the association Order
+#### <a name="chapter4part10"></a>Chapter 4 - Part 10: Create the association Order Many-to-One (User and Order)
 
 Now, let's create the entity order.
 
@@ -3001,7 +3003,7 @@ import com.ecommerce.order.repositories.ProductRepository;
 }
 ```
 
-#### <a name="chapter4part15"></a>Chapter 4 - Part 15: Many-to-Many relation and JoinTable 
+#### <a name="chapter4part15"></a>Chapter 4 - Part 15: Many-to-Many relation and JoinTable (Category and Product)
 
 Product and Category have a association Many-to-Many. For example, a product computer can be in the category of Computers and Eletronics, and the category eletronics can have Computer and Radio.
 
@@ -3092,6 +3094,298 @@ In the H2 table, the table ```tb_product_category``` was created with the relati
 <div align="center"><img src="img/manytomany-w882-h546.png" width=882 height=546><br><sub>Many to Many - (<a href='https://github.com/vitorstabile'>Work by Vitor Garcia</a>) </sub></div>
 
 <br>
+
+#### <a name="chapter4part16"></a>Chapter 4 - Part 16: Many-to-Many relation with extra data (Product and Order)
+
+In the relation with Category and Product, we just have a relation with the two entities, but, if we have a relation with two entites but this relation generate a extra data, like we have in the relation
+with Product and Order, we need to create a entity OrderItem
+
+
+First, let's create the OrderItemPK, that will have the reference of the Order and the Product.
+
+Because we don't have a primary key that can represent two itens in the object paradigma like in the relational paradigma, we need to create a OrderItemPK.
+
+In this class, we will receive a Order and a Product to make the relation Order and Item, and the class OrderItem will receive the OrderItemPK as a id.
+
+The ```@Embeddable``` annotation is used to mark a class as being embeddable, meaning its properties can be included in another class as a value type.
+
+In the attributes Order and Item, we need to make the relation ```@ManyToOne```
+
+```java
+package com.ecommerce.order.entities.pk;
+
+import com.ecommerce.order.entities.Order;
+import com.ecommerce.order.entities.Product;
+import jakarta.persistence.Embeddable;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+
+import java.io.Serializable;
+
+@Embeddable
+public class OrderItemPK implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+
+    @ManyToOne
+    @JoinColumn(name = "order_id")
+    private Order order;
+
+    @ManyToOne
+    @JoinColumn(name = "product_id")
+    private Product product;
+
+    public Order getOrder() {
+        return order;
+    }
+
+    public void setOrder(Order order) {
+        this.order = order;
+    }
+
+    public Product getProduct() {
+        return product;
+    }
+
+    public void setProduct(Product product) {
+        this.product = product;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof OrderItemPK that)) return false;
+
+        if (getOrder() != null ? !getOrder().equals(that.getOrder()) : that.getOrder() != null) return false;
+        return getProduct() != null ? getProduct().equals(that.getProduct()) : that.getProduct() == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = getOrder() != null ? getOrder().hashCode() : 0;
+        result = 31 * result + (getProduct() != null ? getProduct().hashCode() : 0);
+        return result;
+    }
+}
+```
+
+Now, let,s create the class OrderItem that will use the reference of the OrderItemPK
+
+```java
+
+package com.ecommerce.order.entities;
+
+import com.ecommerce.order.entities.pk.OrderItemPK;
+
+import java.io.Serializable;
+import java.util.Objects;
+
+public class OrderItem implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+
+    private OrderItemPK id;
+
+    private Integer quantity;
+
+    private Double price;
+
+    public OrderItem(){
+
+    }
+
+    public OrderItem(Integer quantity, Double price) {
+        this.quantity = quantity;
+        this.price = price;
+    }
+
+    public Integer getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(Integer quantity) {
+        this.quantity = quantity;
+    }
+
+    public Double getPrice() {
+        return price;
+    }
+
+    public void setPrice(Double price) {
+        this.price = price;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof OrderItem orderItem)) return false;
+
+        if (!Objects.equals(id, orderItem.id)) return false;
+        if (getQuantity() != null ? !getQuantity().equals(orderItem.getQuantity()) : orderItem.getQuantity() != null)
+            return false;
+        return getPrice() != null ? getPrice().equals(orderItem.getPrice()) : orderItem.getPrice() == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = id != null ? id.hashCode() : 0;
+        result = 31 * result + (getQuantity() != null ? getQuantity().hashCode() : 0);
+        result = 31 * result + (getPrice() != null ? getPrice().hashCode() : 0);
+        return result;
+    }
+}
+```
+
+We not created the Order and Product getters and setters and not add them in the constructor. This is because we need to use the OrderItemPK id methods set and get to set the id of this products in the PK
+
+
+```java
+
+public class OrderItem implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+	
+	//same code
+	
+	public OrderItem(Order order, Product product, Integer quantity, Double price) {
+        id.setOrder(order);
+        id.setProduct(product);
+        this.quantity = quantity;
+        this.price = price;
+    }
+
+    public Order getOrder() {
+        return id.getOrder();
+    }
+
+    public void setOrder(Order order) {
+        id.setOrder(order);
+    }
+
+    public Product getProduct() {
+        return id.getProduct();
+    }
+
+    public void setProduct(Product product) {
+        id.setProduct(product);
+    }
+	
+	//same code
+
+}
+
+```
+
+Now, let's make the annotations.
+
+The ```@EmbeddedId``` annotation is applied to a persistent field or property of an entity class or mapped superclass to denote a composite primary key that is an embeddable class. 
+The embeddable class must be annotated as Embeddable.
+
+```java
+
+@Entity
+@Table(name = "tb_order_item")
+public class OrderItem implements Serializable {
+
+	@EmbeddedId
+    private OrderItemPK id = new OrderItemPK();
+
+```
+
+Now, we need to make the relation of the order with product
+
+First, let's make the relation in Order class. Because we will make the relation with table ```tb_order_item```, we need to make the relation ```@OneToMany``` with the ```id.order``` where the id is the OrderItemPK
+
+
+```java
+@Entity
+@Table(name = "tb_order")
+public class Order implements Serializable {
+
+	// same code
+
+	@OneToMany(mappedBy = "id.order")
+    private Set<OrderItem> items = new HashSet<>();
+	
+	//same code
+	
+	public Set<OrderItem> getItems() {
+        return items;
+    }
+
+```
+
+Now, let's create the order item repository
+
+```java
+
+package com.ecommerce.order.repositories;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface OrderItemRepository extends JpaRepository<OrderItem, OrderItemPK> {
+}
+
+```
+
+To avoid ciclical reference, we need to use the ```@JsonIgnore``` in the getOrder() because is what using to get a order
+
+```java
+
+public class OrderItem implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+	
+	//same code
+	
+	@JsonIgnore
+    public Order getOrder() {
+        return id.getOrder();
+    }
+	
+	//same code
+
+}
+
+```
+
+Now, let's test and make the seed in the database
+
+
+```java
+
+import com.ecommerce.order.entities.Product;
+
+import com.ecommerce.order.repositories.ProductRepository;
+
+	@Configuration
+	@Profile("test")
+	public class TestConfig implements CommandLineRunner {
+	
+	@Autowired
+    private OrderItemRepository orderItemRepository;
+	
+	OrderItem oi1 = new OrderItem(o1, p1, 2, p1.getPrice());
+	OrderItem oi2 = new OrderItem(o1, p3, 1, p3.getPrice());
+	OrderItem oi3 = new OrderItem(o2, p3, 2, p3.getPrice());
+	OrderItem oi4 = new OrderItem(o3, p5, 2, p5.getPrice());
+
+	orderItemRepository.saveAll(Arrays.asList(oi1, oi2, oi3, oi4));
+	
+}
+
+```
+
+Now, make a get http://localhost:8080/orders/1
+
+```
+{"id":1,
+"moment":"2019-06-20T19:53:07Z",
+"user":{"id":1,"name":"Maria Brown","email":"maria@gmail.com","phone":"988888888","password":"123456"},
+"orderStatus":"PAID",
+"items":[{"quantity":1,"price":1250.0,"product":{"id":3,"name":"Macbook Pro","description":"Nam eleifend maximus tortor, at mollis.","price":1250.0,"imgUrl":"","categories":[{"id":3,"name":"Computers"}]}},
+		 {"quantity":2,"price":90.5,"product":{"id":1,"name":"The Lord of the Rings","description":"Lorem ipsum dolor sit amet, consectetur.","price":90.5,"imgUrl":"","categories":[{"id":2,"name":"Books"}]}}]}
+```
 
 ## <a name="chapter5"></a>Chapter 5: Spring Security with Spring Boot
   
