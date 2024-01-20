@@ -3699,7 +3699,7 @@ public class TestConfig implements CommandLineRunner {
 
 ```
 
-#### <a name="chapter4part16"></a>Chapter 4 - Part 17: Create the subTotal() and total() methods
+#### <a name="chapter4part16"></a>Chapter 4 - Part 18: Create the subTotal() and total() methods
 
 Let's create the method subTotal() to OrderItem;
 
@@ -3793,6 +3793,72 @@ Now, if we make a http://localhost:8080/orders/1, we will have the total and sub
     },
     "total": 1431.0
 }
+```
+
+#### <a name="chapter4part18"></a>Chapter 4 - Part 18: Insert a User
+
+Now, let's insert a user. First, we need to modify our UserService class to insert a user
+
+```java
+@Service
+public class UserService {
+
+	//same code
+
+	public User insert(User obj){
+        return repository.save(obj);
+    }
+
+}
+```
+
+Now, let's modify our User Respurce
+
+
+```java
+
+@RestController
+@RequestMapping(value = "/users")
+public class UserResource {
+
+//same code
+
+
+	@PostMapping
+    public ResponseEntity<User> insert(@RequestBody User obj) {
+        service.insert(obj);
+        return ResponseEntity.ok().body(obj);
+    }
+
+}
+
+```
+
+If we make ```curl --location 'http://localhost:8080/users' --header 'Content-Type: application/json' --data-raw '{   "name":"Bob Brown","email":"bob@gmail.com","phone":"977557755","password":"123456"}'````
+
+We will receive a 200 Ok. But, to create, we have to receive a 201. For this, we need to create a uri.
+
+Let's modify the resource response
+
+
+```java
+
+@RestController
+@RequestMapping(value = "/users")
+public class UserResource {
+
+//same code
+
+
+	@PostMapping
+    public ResponseEntity<User> insert(@RequestBody User obj) {
+        service.insert(obj);
+        URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(obj.getId()).toUri();
+        return ResponseEntity.created(uri).body(obj);
+    }
+
+}
+
 ```
 
 ## <a name="chapter5"></a>Chapter 5: Spring Security with Spring Boot
