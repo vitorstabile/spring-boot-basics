@@ -44,6 +44,8 @@
 	- [Chapter 4 - Part 14: Create the Product Repository, Service and resource](#chapter4part14)
 	- [Chapter 4 - Part 15: Many-to-Many relation and JoinTable (Category and Product)](#chapter4part15)
 	- [Chapter 4 - Part 16: Many-to-Many relation with extra data (Product and Order)](#chapter4part16)
+	- [Chapter 4 - Part 17: Create the Payment Entity and Relation One-to-one with Order](#chapter4part17)
+	- [Chapter 4 - Part 18: Create the subTotal() and total() methods](#chapter4part18)
 5. [Chapter 5: Spring Security with Spring Boot](#chapter5)
     - [Chapter 5 - Part 1: Security Fundamentals](#chapter5part1)
     - [Chapter 5 - Part 2: Important Security Principles](#chapter5part2)
@@ -3619,6 +3621,7 @@ public class Payment implements Serializable {
 
     private Instant moment;
 
+	@JsonIgnore
     @OneToOne
     @MapsId
     private Order order;
@@ -3694,6 +3697,102 @@ public class TestConfig implements CommandLineRunner {
 
 }
 
+```
+
+#### <a name="chapter4part16"></a>Chapter 4 - Part 17: Create the subTotal() and total() methods
+
+Let's create the method subTotal() to OrderItem;
+
+
+```java
+
+@Entity
+@Table(name = "tb_order_item")
+public class OrderItem implements Serializable {
+
+	//same code
+	
+	 public Double getSubTotal(){
+        Double subTotal = quantity*price;
+
+        return subTotal;
+    }
+	
+	//same code
+
+}
+
+
+```
+
+Now, let's make the Total() to Order
+
+```java
+
+public Double getTotal() {
+        Double sum = 0.0;
+        for (OrderItem item : items) {
+            sum += item.getSubTotal();
+        }
+        return sum;
+    }
+
+```
+
+Now, if we make a http://localhost:8080/orders/1, we will have the total and subtotal
+
+```
+{
+    "id": 1,
+    "moment": "2019-06-20T19:53:07Z",
+    "user": {
+        "id": 1,
+        "name": "Maria Brown",
+        "email": "maria@gmail.com",
+        "phone": "988888888",
+        "password": "123456"
+    },
+    "orderStatus": "PAID",
+    "items": [{
+            "quantity": 1,
+            "price": 1250.0,
+            "product": {
+                "id": 3,
+                "name": "Macbook Pro",
+                "description": "Nam eleifend maximus tortor, at mollis.",
+                "price": 1250.0,
+                "imgUrl": "",
+                "categories": [{
+                        "id": 3,
+                        "name": "Computers"
+                    }
+                ]
+            },
+            "subTotal": 1250.0
+        }, {
+            "quantity": 2,
+            "price": 90.5,
+            "product": {
+                "id": 1,
+                "name": "The Lord of the Rings",
+                "description": "Lorem ipsum dolor sit amet, consectetur.",
+                "price": 90.5,
+                "imgUrl": "",
+                "categories": [{
+                        "id": 2,
+                        "name": "Books"
+                    }
+                ]
+            },
+            "subTotal": 181.0
+        }
+    ],
+    "payment": {
+        "id": 1,
+        "moment": "2019-06-20T21:53:07Z"
+    },
+    "total": 1431.0
+}
 ```
 
 ## <a name="chapter5"></a>Chapter 5: Spring Security with Spring Boot
