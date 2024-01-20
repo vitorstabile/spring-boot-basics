@@ -2789,6 +2789,218 @@ import com.ecommerce.order.repositories.CategoryRepository;
 
 #### <a name="chapter4part14"></a>Chapter 4 - Part 14: Create the Product Repository, Service and resource
 
+Product Entity
+
+Because Product and Category have a relation, we have to implement this in the both sides. Let's implements a Set collection, because a product can't have duplicate categories.
+
+Because we will not implement the mapping of relation with Category and Product like the we did with Order and User, we need to use the annotation
+```@Transient```
+
+@Transient annotation in Hibernate is used to mark a property or field in an entity class as transient. 
+This means that the field or property marked as transient should be excluded when the data persists in the database. 
+Wherever an entity is mapped to a database table, by default all the non-transient fields and properties are persisted. 
+There are certain fields or properties in an entity that should be ignored during the data persistence process such as the data which is being calculated for displaying, temporary variables, and other data which is relevant only within the application logic but is not required in the database. 
+
+```java
+package com.ecommerce.order.entities;
+
+import jakarta.persistence.*;
+
+import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
+
+@Entity
+@Table(name = "tb_product")
+public class Product implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    private String name;
+    private String description;
+    private Double price;
+    private String imgUrl;
+
+	@Transient
+    private Set<Category> categories = new HashSet<>();
+
+    public Product() {
+
+    }
+
+    public Product(Long id, String name, String description, Double price, String imgUrl) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.price = price;
+        this.imgUrl = imgUrl;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public Double getPrice() {
+        return price;
+    }
+
+    public void setPrice(Double price) {
+        this.price = price;
+    }
+
+    public String getImgUrl() {
+        return imgUrl;
+    }
+
+    public void setImgUrl(String imgUrl) {
+        this.imgUrl = imgUrl;
+    }
+
+    public Set<Category> getCategories() {
+        return categories;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Product product)) return false;
+
+        return Objects.equals(id, product.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return id != null ? id.hashCode() : 0;
+    }
+}
+```
+
+Category relation with Product
+
+```java
+@Entity
+@Table(name = "tb_category")
+public class Category implements Serializable {
+
+	// same code
+	
+	@Transient
+	private Set<Product> products = new HashSet<>();
+	
+	// same code
+	
+	public Set<Product> getProducts() {
+        return products;
+    }
+```
+
+Product Repository
+
+```java
+
+package com.ecommerce.order.repositories;
+
+import com.ecommerce.order.entities.Product;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface ProductRepository extends JpaRepository<Product, Long> {
+}
+```
+
+Product service
+
+```java
+@Service
+public class ProductService {
+
+    @Autowired
+    private ProductRepository repository;
+
+    public List<Product> findAll() {
+        return repository.findAll();
+    }
+
+    public Product findById(Long id) {
+        Optional<Product> obj = repository.findById(id);
+        return obj.get();
+    }
+
+}
+```
+
+Product Resource
+
+```java
+@RestController
+@RequestMapping(value = "/products")
+public class ProductResource {
+
+    @Autowired
+    private ProductService service;
+
+    @GetMapping
+    public ResponseEntity<List<Product>> findAll() {
+        List<Product> list = service.findAll();
+        return ResponseEntity.ok().body(list);
+    }
+
+    @GetMapping(value = "/{id}")
+    public ResponseEntity<Product> findById(@PathVariable Long id) {
+        Product obj = service.findById(id);
+        return ResponseEntity.ok().body(obj);
+    }
+
+}
+```
+
+Create the test Class
+
+```java
+import com.ecommerce.order.entities.Product;
+
+import com.ecommerce.order.repositories.ProductRepository;
+
+	@Configuration
+	@Profile("test")
+	public class TestConfig implements CommandLineRunner {
+	
+		@Autowired
+		private ProductRepository productRepository;
+	
+		Product p1 = new Product(null, "The Lord of the Rings", "Lorem ipsum dolor sit amet, consectetur.", 90.5, "");
+        Product p2 = new Product(null, "Smart TV", "Nulla eu imperdiet purus. Maecenas ante.", 2190.0, "");
+        Product p3 = new Product(null, "Macbook Pro", "Nam eleifend maximus tortor, at mollis.", 1250.0, "");
+        Product p4 = new Product(null, "PC Gamer", "Donec aliquet odio ac rhoncus cursus.", 1200.0, "");
+        Product p5 = new Product(null, "Rails for Dummies", "Cras fringilla convallis sem vel faucibus.", 100.99, "");
+
+        productRepository.saveAll(Arrays.asList(p1,p2,p3,p4,p5));
+	
+}
+```
 
 
 ## <a name="chapter5"></a>Chapter 5: Spring Security with Spring Boot
