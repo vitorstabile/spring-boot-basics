@@ -2786,7 +2786,6 @@ import com.ecommerce.order.repositories.CategoryRepository;
 }
 ```
 	
-
 #### <a name="chapter4part14"></a>Chapter 4 - Part 14: Create the Product Repository, Service and resource
 
 Product Entity
@@ -3002,6 +3001,97 @@ import com.ecommerce.order.repositories.ProductRepository;
 }
 ```
 
+#### <a name="chapter4part15"></a>Chapter 4 - Part 15: Many-to-Many relation and JoinTable 
+
+Product and Category have a association Many-to-Many. For example, a product computer can be in the category of Computers and Eletronics, and the category eletronics can have Computer and Radio.
+
+ In the database with need a association table to associate the PK of Category with the PK of products.
+ 
+ With JPA, we can make this association using JoinTable.
+ 
+ We first need to choose one class of the association, in this case, or Product or Category.
+ 
+ Let's remove the ```@Transient``` annotation, in the association class and use this annotations
+ 
+  - @ManyToMany: The type of association with category
+  - @JoinTable(name = "tb_product_category", : The name of the table that will have the association
+  - @JoinTable(joinColumns = @JoinColumn(name = "product_id"), : The name of the column that will have the assocation with the category
+  - @JoinTable(inverseJoinColumns = @JoinColumn(name = "category_id"): The name of the column for the other side that will have the assocation with the product
+ 
+ ```java
+ 
+ @Entity
+@Table(name = "tb_product")
+public class Product implements Serializable {
+
+	//same code
+	
+	@ManyToMany
+    @JoinTable(name = "tb_product_category",
+               joinColumns = @JoinColumn(name = "product_id"),
+               inverseJoinColumns = @JoinColumn(name = "category_id"))
+	private Set<Category> categories = new HashSet<>();
+	
+	//same code
+
+```
+
+Now, in the class category, we have to reference this relation that we did in Product. We have to use the ```@ManyToMany``` annotation and pass what is the name of the attribute that we are making the relation.
+
+OBS: Don't forget to use the ```@JsonIgnore```
+
+```java
+
+@Entity
+@Table(name = "tb_category")
+public class Category implements Serializable {
+
+	@JsonIgnore
+	@ManyToMany(mappedBy = "categories")
+    private Set<Product> products = new HashSet<>();
+
+```
+
+Now, let's make this association in our testa class. First, we create the association using the operations and we save using the repository class
+
+```java
+import com.ecommerce.order.entities.Product;
+
+import com.ecommerce.order.repositories.ProductRepository;
+
+	@Configuration
+	@Profile("test")
+	public class TestConfig implements CommandLineRunner {
+	
+	p1.getCategories().add(cat2);
+	p2.getCategories().add(cat1);
+	p2.getCategories().add(cat3);
+	p3.getCategories().add(cat3);
+	p4.getCategories().add(cat3);
+	p5.getCategories().add(cat2);
+
+	productRepository.saveAll(Arrays.asList(p1,p2,p3,p4,p5));
+	
+}
+
+```
+
+If we make a GET to http://localhost:8080/products/2
+
+we will have a product with two categories
+
+```
+{"id":2,"name":"Smart TV","description":"Nulla eu imperdiet purus. Maecenas ante.","price":2190.0,"imgUrl":"","categories":[{"id":1,"name":"Electronics"},{"id":3,"name":"Computers"}]}
+```
+
+In the H2 table, the table ```tb_product_category``` was created with the relations that we put in the Test class
+
+
+<br>
+
+<div align="center"><img src="img/manytomany-w882-h546.png" width=882 height=546><br><sub>Many to Many - (<a href='https://github.com/vitorstabile'>Work by Vitor Garcia</a>) </sub></div>
+
+<br>
 
 ## <a name="chapter5"></a>Chapter 5: Spring Security with Spring Boot
   
