@@ -3379,12 +3379,185 @@ import com.ecommerce.order.repositories.ProductRepository;
 Now, make a get http://localhost:8080/orders/1
 
 ```
-{"id":1,
-"moment":"2019-06-20T19:53:07Z",
-"user":{"id":1,"name":"Maria Brown","email":"maria@gmail.com","phone":"988888888","password":"123456"},
-"orderStatus":"PAID",
-"items":[{"quantity":1,"price":1250.0,"product":{"id":3,"name":"Macbook Pro","description":"Nam eleifend maximus tortor, at mollis.","price":1250.0,"imgUrl":"","categories":[{"id":3,"name":"Computers"}]}},
-		 {"quantity":2,"price":90.5,"product":{"id":1,"name":"The Lord of the Rings","description":"Lorem ipsum dolor sit amet, consectetur.","price":90.5,"imgUrl":"","categories":[{"id":2,"name":"Books"}]}}]}
+{
+    "id": 1,
+    "moment": "2019-06-20T19:53:07Z",
+    "user": {
+        "id": 1,
+        "name": "Maria Brown",
+        "email": "maria@gmail.com",
+        "phone": "988888888",
+        "password": "123456"
+    },
+    "orderStatus": "PAID",
+    "items": [{
+            "quantity": 1,
+            "price": 1250.0,
+            "product": {
+                "id": 3,
+                "name": "Macbook Pro",
+                "description": "Nam eleifend maximus tortor, at mollis.",
+                "price": 1250.0,
+                "imgUrl": "",
+                "categories": [{
+                        "id": 3,
+                        "name": "Computers"
+                    }
+                ]
+            }
+        }, {
+            "quantity": 2,
+            "price": 90.5,
+            "product": {
+                "id": 1,
+                "name": "The Lord of the Rings",
+                "description": "Lorem ipsum dolor sit amet, consectetur.",
+                "price": 90.5,
+                "imgUrl": "",
+                "categories": [{
+                        "id": 2,
+                        "name": "Books"
+                    }
+                ]
+            }
+        }
+    ]
+}
+```
+
+Now, let's create the relation with the Product and OrderItem.
+
+```java
+
+@Entity
+@Table(name = "tb_product")
+public class Product implements Serializable {
+
+	//same code
+
+	@JsonIgnore
+    @OneToMany(mappedBy = "id.product")
+    private Set<OrderItem> items = new HashSet<>();
+	
+	
+    public Set<Order> getOrders() {
+        Set<Order> set = new HashSet<>();
+        for (OrderItem x : items) {
+            set.add(x.getOrder());
+        }
+        return set;
+    }
+	
+	// same code
+
+}
+
+```
+
+when we make a get http://localhost:8080/products/3
+
+```
+{
+    "id": 3,
+    "name": "Macbook Pro",
+    "description": "Nam eleifend maximus tortor, at mollis.",
+    "price": 1250.0,
+    "imgUrl": "",
+    "categories": [{
+            "id": 3,
+            "name": "Computers"
+        }
+    ],
+    "orders": [{
+            "id": 1,
+            "moment": "2019-06-20T19:53:07Z",
+            "user": {
+                "id": 1,
+                "name": "Maria Brown",
+                "email": "maria@gmail.com",
+                "phone": "988888888",
+                "password": "123456"
+            },
+            "orderStatus": "PAID",
+            "items": [{
+                    "quantity": 1,
+                    "price": 1250.0
+                }, {
+                    "quantity": 2,
+                    "price": 90.5
+                }
+            ]
+        }, {
+            "id": 2,
+            "moment": "2019-07-21T03:42:10Z",
+            "user": {
+                "id": 2,
+                "name": "Alex Green",
+                "email": "alex@gmail.com",
+                "phone": "977777777",
+                "password": "123456"
+            },
+            "orderStatus": "WAITING_PAYMENT",
+            "items": [{
+                    "quantity": 2,
+                    "price": 1250.0
+                }
+            ]
+        }
+    ]
+}
+```
+
+If we remove the ```@JsonIgnore``` at getProduct() in OrderItem and put in getOrders() in Product, we have this when we call http://localhost:8080/orders/1
+
+
+```
+
+{
+    "id": 1,
+    "moment": "2019-06-20T19:53:07Z",
+    "user": {
+        "id": 1,
+        "name": "Maria Brown",
+        "email": "maria@gmail.com",
+        "phone": "988888888",
+        "password": "123456"
+    },
+    "orderStatus": "PAID",
+    "items": [{
+            "quantity": 1,
+            "price": 1250.0,
+            "product": {
+                "id": 3,
+                "name": "Macbook Pro",
+                "description": "Nam eleifend maximus tortor, at mollis.",
+                "price": 1250.0,
+                "imgUrl": "",
+                "categories": [{
+                        "id": 3,
+                        "name": "Computers"
+                    }
+                ]
+            }
+        }, {
+            "quantity": 2,
+            "price": 90.5,
+            "product": {
+                "id": 1,
+                "name": "The Lord of the Rings",
+                "description": "Lorem ipsum dolor sit amet, consectetur.",
+                "price": 90.5,
+                "imgUrl": "",
+                "categories": [{
+                        "id": 2,
+                        "name": "Books"
+                    }
+                ]
+            }
+        }
+    ]
+}
+
 ```
 
 ## <a name="chapter5"></a>Chapter 5: Spring Security with Spring Boot
