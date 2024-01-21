@@ -49,6 +49,9 @@
 	- [Chapter 4 - Part 19: Insert a User](#chapter4part19)
 	- [Chapter 4 - Part 20: Delete a User](#chapter4part20
 	- [Chapter 4 - Part 21: Update a User](#chapter4part21)
+	- [Chapter 4 - Part 22: Exception Handler - findById](#chapter4part22)
+	- [Chapter 4 - Part 23: Exception Handler - delete](#chapter4part23)
+	- [Chapter 4 - Part 24: Exception Handler - update](#chapter4part24)
 5. [Chapter 5: Spring Security with Spring Boot](#chapter5)
     - [Chapter 5 - Part 1: Security Fundamentals](#chapter5part1)
     - [Chapter 5 - Part 2: Important Security Principles](#chapter5part2)
@@ -3565,7 +3568,7 @@ If we remove the ```@JsonIgnore``` at getProduct() in OrderItem and put in getOr
 
 ```
 
-#### <a name="chapter4part16"></a>Chapter 4 - Part 17: Create the Payment Entity and Relation One-to-one with Order
+#### <a name="chapter4part17"></a>Chapter 4 - Part 17: Create the Payment Entity and Relation One-to-one with Order
 
 First, lets create the association Payment in Order class. Because the Payment and Order will have the same Id, we can use a annotation
 with ```@OneToOne``` with ```cascade = CascadeType.ALL```. If the Order have id 5, the Payment will have the id 5.
@@ -3702,7 +3705,7 @@ public class TestConfig implements CommandLineRunner {
 
 ```
 
-#### <a name="chapter4part16"></a>Chapter 4 - Part 18: Create the subTotal() and total() methods
+#### <a name="chapter4part18"></a>Chapter 4 - Part 18: Create the subTotal() and total() methods
 
 Let's create the method subTotal() to OrderItem;
 
@@ -3909,7 +3912,7 @@ public class UserResource {
 
 This Curl will return a 204 No Content ```curl --location --request DELETE 'http://localhost:8080/users/3'```
 
-#### <a name="chapter4part20"></a>Chapter 4 - Part 21: Update a User
+#### <a name="chapter4part21"></a>Chapter 4 - Part 21: Update a User
 
 Now, let's update a a user.
 
@@ -3991,6 +3994,12 @@ Now, check with the Get if the user was updated in the database ```curl --locati
     "password": "123456"
 }
 ```
+
+#### <a name="chapter4part22"></a>Chapter 4 - Part 22: Exception Handler - findById
+
+#### <a name="chapter4part23"></a>Chapter 4 - Part 23: Exception Handler - delete
+
+#### <a name="chapter4part24"></a>Chapter 4 - Part 24: Exception Handler - update
 
 ## <a name="chapter5"></a>Chapter 5: Spring Security with Spring Boot
   
