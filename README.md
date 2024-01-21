@@ -46,6 +46,9 @@
 	- [Chapter 4 - Part 16: Many-to-Many relation with extra data (Product and Order)](#chapter4part16)
 	- [Chapter 4 - Part 17: Create the Payment Entity and Relation One-to-one with Order](#chapter4part17)
 	- [Chapter 4 - Part 18: Create the subTotal() and total() methods](#chapter4part18)
+	- [Chapter 4 - Part 19: Insert a User](#chapter4part19)
+	- [Chapter 4 - Part 20: Delete a User](#chapter4part20
+	- [Chapter 4 - Part 21: Update a User](#chapter4part21)
 5. [Chapter 5: Spring Security with Spring Boot](#chapter5)
     - [Chapter 5 - Part 1: Security Fundamentals](#chapter5part1)
     - [Chapter 5 - Part 2: Important Security Principles](#chapter5part2)
@@ -3795,7 +3798,7 @@ Now, if we make a http://localhost:8080/orders/1, we will have the total and sub
 }
 ```
 
-#### <a name="chapter4part18"></a>Chapter 4 - Part 18: Insert a User
+#### <a name="chapter4part19"></a>Chapter 4 - Part 19: Insert a User
 
 Now, let's insert a user. First, we need to modify our UserService class to insert a user
 
@@ -3812,7 +3815,7 @@ public class UserService {
 }
 ```
 
-Now, let's modify our User Respurce
+Now, let's modify our User Resource
 
 
 ```java
@@ -3860,6 +3863,53 @@ public class UserResource {
 }
 
 ```
+
+#### <a name="chapter4part20"></a>Chapter 4 - Part 20: Delete a User
+
+Now, let's delete a user. For this test, we will delete a user that not have Orders associate with him.
+If we try to delete a user that have orders associate with him, this will cause a ConstraintViolatException because we have orders associate in the database
+
+
+For this, first, let's modigy or UserService
+
+```java
+@Service
+public class UserService {
+
+	//same code
+
+	public void deleteById(Long id){
+        repository.deleteById(id);
+    }
+
+}
+```
+
+Now, let's modify our User Resource. Because the Delete method in some cases don't have a return, we can say in our method that ResponseEntity will return a Void
+
+
+```java
+
+@RestController
+@RequestMapping(value = "/users")
+public class UserResource {
+
+	//same code
+
+
+	@DeleteMapping(value = "/{id}")
+    public ResponseEntity<Void> deleteById(@PathVariable Long id) {
+        service.delete(id);
+        return ResponseEntity.noContent().build();
+    }
+
+}
+
+```
+
+#### <a name="chapter4part20"></a>Chapter 4 - Part 21: Update a User
+
+
 
 ## <a name="chapter5"></a>Chapter 5: Spring Security with Spring Boot
   
