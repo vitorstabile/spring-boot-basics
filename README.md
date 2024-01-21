@@ -3907,9 +3907,90 @@ public class UserResource {
 
 ```
 
+This Curl will return a 204 No Content ```curl --location --request DELETE 'http://localhost:8080/users/3'```
+
 #### <a name="chapter4part20"></a>Chapter 4 - Part 21: Update a User
 
+Now, let's update a a user.
 
+In ther User Service, we need to create a method that will receive a id and a obj User. The Id have the responsability to get the user in the database, and the obj will be what we will update
+
+
+```java
+
+@Service
+public class UserService {
+
+	//same code
+
+	public User updateUser(Long id, User obj){
+        User entity = repository.getReferenceById(id);
+        updateData(entity, obj);
+        return repository.save(entity);
+    }
+
+    private void updateData(User entity, User obj) {
+        entity.setName(obj.getName());
+        entity.setEmail(obj.getEmail());
+        entity.setPhone(obj.getPhone());
+
+    }
+
+}
+
+```
+
+Now, let's create the resource
+
+```java
+
+@RestController
+@RequestMapping(value = "/users")
+public class UserResource {
+
+	//same code
+
+
+	@PutMapping(value = "/{id}")
+    public ResponseEntity<User> updateUserById(@PathVariable Long id, @RequestBody User obj) {
+        obj = service.updateUser(id,obj);
+        return ResponseEntity.ok().body(obj);
+    }
+
+}
+
+```
+
+Now, let's test
+
+First, make a POST of the user ```curl --location 'http://localhost:8080/users' --header 'Content-Type: application/json' --data-raw '{   "name":"Bob Brown","email":"bob@gmail.com","phone":"977557755","password":"123456"}'```
+
+Now, make a update of this user with id 3 ```curl --location --request PUT 'http://localhost:8080/users/3' --header 'Content-Type: application/json' --data-raw '{   "name":"Alex Brown","email":"alex@gmail.com","phone":"977557755"}'```
+
+This will return this body
+
+```
+{
+    "id": 3,
+    "name": "Alex Brown",
+    "email": "alex@gmail.com",
+    "phone": "977557755",
+    "password": "123456"
+}
+```
+
+Now, check with the Get if the user was updated in the database ```curl --location 'http://localhost:8080/users/3'```
+
+```
+
+{
+    "id": 3,
+    "name": "Alex Brown",
+    "email": "alex@gmail.com",
+    "phone": "977557755",
+    "password": "123456"
+}
+```
 
 ## <a name="chapter5"></a>Chapter 5: Spring Security with Spring Boot
   
