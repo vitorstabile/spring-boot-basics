@@ -3997,7 +3997,219 @@ Now, check with the Get if the user was updated in the database ```curl --locati
 
 #### <a name="chapter4part22"></a>Chapter 4 - Part 22: Exception Handler - findById
 
+When we try to make a GET in a user that not exist in a Database ```curl --location 'http://localhost:8080/users/7'```, we will receive this reponse
+
+```
+{
+    "timestamp": "2024-01-21T13:58:15.863+00:00",
+    "status": 500,
+    "error": "Internal Server Error",
+    "path": "/users/7"
+}
+```
+
+This is not a appropriate response in this case, because a 500 HTTP Status is a Server Error. We need to return a 404 HTTP Status. Let's create a Exception Handler for this cases.
+
+Let's create a exception class in the Service Packge, because the error 500 is rising in the service layer. Let's analyse the logs of error
+
+```
+java.util.NoSuchElementException: No value present
+	at java.base/java.util.Optional.get(Optional.java:143) ~[na:na]
+	at com.ecommerce.order.services.UserService.findById(UserService.java:23) ~[classes/:na]
+	at com.ecommerce.order.resources.UserResource.findById(UserResource.java:29) ~[classes/:na]
+```
+
+In the stack, the optional raise a error comming from the UserService layer that was propagate to the UserResource
+
+Let's create in the service package a package called Exception and create a ResourceNotFoundException class.
+
+Because of this class in not a compile error and this kind of error we are not oblight to handle, this class will extende a RuntimeException.
+
+This class will have a constructor, that when this exception raise, will show a message
+
+```java
+package com.ecommerce.order.services.exceptions;
+
+public class ResourceNotFoundException extends RuntimeException {
+
+    private static final long serialVersionUID = 1L;
+
+    public ResourceNotFoundException(Object id) {
+        super("Resource not found. Id " + id);
+    }
+
+}
+```
+
+Now, let's create a Standard Error class. Let's create a Canonical Error standard in case of errors
+
+Let's create a class with this fields
+
+```
+{
+    "timestamp": "2024-01-21T13:58:15.863+00:00",
+    "status": 500,
+    "error": "Internal Server Error",
+    "path": "/users/7"
+}
+```
+
+Because the class that deal with resourcers and send errors to response, let's create this in the Resource Exception.
+
+
+```java
+
+package com.ecommerce.order.resources.exceptions;
+
+import java.io.Serializable;
+import java.time.Instant;
+
+public class StandardError implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'", timezone = "GMT")
+    private Instant timestamp;
+
+    private Integer status;
+
+    private String error;
+
+    private String message;
+
+    private String path;
+
+    public StandardError() {
+
+    }
+
+    public StandardError(Instant timestamp, Integer status, String error, String message, String path) {
+        this.timestamp = timestamp;
+        this.status = status;
+        this.error = error;
+        this.message = message;
+        this.path = path;
+    }
+
+    public Instant getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(Instant timestamp) {
+        this.timestamp = timestamp;
+    }
+
+    public Integer getStatus() {
+        return status;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
+    }
+
+    public String getError() {
+        return error;
+    }
+
+    public void setError(String error) {
+        this.error = error;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
+    }
+}
+
+```
+
+Now, let's create a ResourceExceptionHandler, that we will handler manualy the exception in the resource. 
+
+For this, we can make the use of the annotation ```@ControllerAdvice``` that will intercept the esceptions that will occur.
+
+Let's create a resourceNotFound() method, that will receive the custom Exception ResourceNotFoundException, and a HttpServletRequest that will be the request that occur.
+
+After, this method needs to use the annotation ```@ExceptionHandler(ResourceNotFoundException.class)``` because every exception that occur with ResourceNotFoundException, will pass to the method resourceNotFound()
+
+```java
+package com.ecommerce.order.resources.exceptions;
+
+import com.ecommerce.order.services.exceptions.ResourceNotFoundException;
+import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+
+import java.time.Instant;
+
+@ControllerAdvice
+public class ResourceExceptionHandler {
+
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<StandardError> resourceNotFound(ResourceNotFoundException e, HttpServletRequest request) {
+        String error = "Resource not found";
+        HttpStatus status = HttpStatus.NOT_FOUND;
+        StandardError err = new StandardError(Instant.now(), status.value(), error, e.getMessage(), request.getRequestURI());
+        return ResponseEntity.status(status).body(err);
+    }
+
+}
+```
+
+Now, let's update the UserService. For this, let's use a method of Optional to, if the obj not exist, throw a exception.
+
+After, we create a new ResourceNotFoundException(id) that with this Id, this call the Constructor with the message
+
+```java
+
+@Service
+public class UserService {
+
+	// same code
+	
+	public User findById(Long id) {
+        Optional<User> obj = repository.findById(id);
+        return obj.orElseThrow(() -> new ResourceNotFoundException(id));
+    }
+	
+	// same code
+
+}
+
+```
+
+Now, let's test ```curl --location 'http://localhost:8080/users/7'```
+
+```
+
+{
+    "timestamp": "2024-01-21T14:33:52Z",
+    "status": 404,
+    "error": "Resource not found",
+    "message": "Resource not found. Id 7",
+    "path": "/users/7"
+}
+
+```
+
+If we check the application, this will not raise the exception
+
+
 #### <a name="chapter4part23"></a>Chapter 4 - Part 23: Exception Handler - delete
+
+
 
 #### <a name="chapter4part24"></a>Chapter 4 - Part 24: Exception Handler - update
 
