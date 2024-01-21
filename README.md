@@ -4360,6 +4360,45 @@ Now, if we try to delete a user we will have
 
 #### <a name="chapter4part24"></a>Chapter 4 - Part 24: Exception Handler - update
 
+Let's try to update a user that not exist. In the Service, let's make the same thing
+
+
+```java
+
+ public User updateUser(Long id, User obj){
+        try {
+            User entity = repository.getReferenceById(id);
+            updateData(entity, obj);
+            return repository.save(entity);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new ResourceNotFoundException(id);
+        }
+        
+    }
+
+```
+
+This will raise a ```EntityNotFoundException```
+
+let's modify
+
+```java
+
+ public User updateUser(Long id, User obj){
+        try {
+            User entity = repository.getReferenceById(id);
+            updateData(entity, obj);
+            return repository.save(entity);
+        } catch (EntityNotFoundException e) {
+            throw new ResourceNotFoundException(id);
+        }
+
+    }
+	
+```
+
+
 ## <a name="chapter5"></a>Chapter 5: Spring Security with Spring Boot
   
 #### <a name="chapter5part1"></a>Chapter 5 - Part 1: Security Fundamentals
