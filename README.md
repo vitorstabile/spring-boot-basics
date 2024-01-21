@@ -47,7 +47,7 @@
 	- [Chapter 4 - Part 17: Create the Payment Entity and Relation One-to-one with Order](#chapter4part17)
 	- [Chapter 4 - Part 18: Create the subTotal() and total() methods](#chapter4part18)
 	- [Chapter 4 - Part 19: Insert a User](#chapter4part19)
-	- [Chapter 4 - Part 20: Delete a User](#chapter4part20
+	- [Chapter 4 - Part 20: Delete a User](#chapter4part20)
 	- [Chapter 4 - Part 21: Update a User](#chapter4part21)
 	- [Chapter 4 - Part 22: Exception Handler - findById](#chapter4part22)
 	- [Chapter 4 - Part 23: Exception Handler - delete](#chapter4part23)
