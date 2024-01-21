@@ -4209,7 +4209,154 @@ If we check the application, this will not raise the exception
 
 #### <a name="chapter4part23"></a>Chapter 4 - Part 23: Exception Handler - delete
 
+Now, let's test a delete with a user that not exist. ```curl --location --request DELETE 'http://localhost:8080/users/7'```
 
+This not generate a exception in the Postman even in the program. Let's capture this exception using a try-catch in the delete method of UserService
+
+```java
+
+@Service
+public class UserService {
+
+	// same code
+	
+	public void deleteById(Long id){
+        try {
+            repository.deleteById(id);
+        } catch (RuntimeException e) {
+            System.out.println(e.getMessage());
+        }
+
+    }
+	
+	// same code
+
+}
+
+```
+
+If we check, the exception raise a ```EmptyResultDataAccessException```, so let's modify
+
+
+```java
+
+@Service
+public class UserService {
+
+	// same code
+	
+	public void deleteById(Long id){
+        try {
+            repository.deleteById(id);
+        } catch (EmptyResultDataAccessException e) {
+            throw new ResourceNotFoundException(id);
+        }
+
+    }
+	
+	// same code
+
+}
+
+```
+
+Now, let's try to delete a user that have orders. let's make the same thing
+
+```java
+
+public void deleteById(Long id){
+        try {
+            repository.deleteById(id);
+        } catch (EmptyResultDataAccessException e) {
+            throw new ResourceNotFoundException(id);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+```
+
+If we check the logs of the application, we will have this exception
+
+
+```DataIntegrityViolationException```
+
+Now, let's create a custom Exception
+
+
+```java
+
+package com.ecommerce.order.services.exceptions;
+
+public class DatabaseException extends RuntimeException {
+
+    private static final long serialVersionUID = 1L;
+    public DatabaseException(String msg) {
+        super(msg);
+    }
+
+}
+```
+
+Now let,s modify our service classdelete method
+
+
+```java
+
+ public void deleteById(Long id){
+        try {
+            repository.deleteById(id);
+        } catch (EmptyResultDataAccessException e) {
+            throw new ResourceNotFoundException(id);
+        } catch (DataIntegrityViolationException e) {
+            throw new DatabaseException(e.getMessage());
+        }
+
+    }
+```
+
+Now, let's create our personalize exception resource
+
+
+```java
+
+
+
+@ControllerAdvice
+public class ResourceExceptionHandler {
+
+    //same code
+
+    @ExceptionHandler(DatabaseException.class)
+    public ResponseEntity<StandardError> resourceNotFound(DatabaseException e, HttpServletRequest request) {
+        String error = "Database error";
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        StandardError err = new StandardError(Instant.now(), status.value(), error, e.getMessage(), request.getRequestURI());
+        return ResponseEntity.status(status).body(err);
+    }
+	
+	//same code
+
+}
+
+```
+
+
+Now, if we try to delete a user we will have
+
+
+```
+
+{
+    "timestamp": "2024-01-21T15:09:33Z",
+    "status": 400,
+    "error": "Database error",
+    "message": "could not execute statement [Referential integrity constraint violation: \"FK2P4N9CIUI39792TK5QDPCXQ1W: PUBLIC.TB_ORDER FOREIGN KEY(USER_ID) REFERENCES PUBLIC.TB_USER(ID) (CAST(1 AS BIGINT))\"; SQL statement:\ndelete from tb_user where id=? [23503-224]] [delete from tb_user where id=?]; SQL [delete from tb_user where id=?]; constraint [\"FK2P4N9CIUI39792TK5QDPCXQ1W: PUBLIC.TB_ORDER FOREIGN KEY(USER_ID) REFERENCES PUBLIC.TB_USER(ID) (CAST(1 AS BIGINT))\"; SQL statement:\ndelete from tb_user where id=? [23503-224]]",
+    "path": "/users/1"
+}
+
+```
 
 #### <a name="chapter4part24"></a>Chapter 4 - Part 24: Exception Handler - update
 
