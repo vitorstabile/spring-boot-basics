@@ -61,6 +61,8 @@
     - [Chapter 5 - Part 6: Basic Authentication](#chapter5part6)
     - [Chapter 5 - Part 7: Cross Site Request Forgery - CSRF](#chapter5part7)
     - [Chapter 5 - Part 8: Cross-Origin Resource Sharing - CORS](#chapter5part8)
+    - [Chapter 5 - Part 9: Storing User Credentials in Memory](#chapter5part9)
+    - [Chapter 5 - Part 10: Storing User Credentials using JDBC](#chapter5part10)
 
 ## <a name="chapter1"></a>Chapter 1: Introducing Spring Boot
   
@@ -4938,3 +4940,52 @@ public class BasicAuthSecurityConfiguration {
 	- Local Configuration
 	  - @CrossOrigin - Allow from all origins
 	  - @CrossOrigin(origins = "https://www.in28minutes.com") - Allow from specific origin
+
+#### <a name="chapter5part9"></a>Chapter 5 - Part 9: Storing User Credentials in Memory
+
+User credentials can be stored in:
+  -  **In Memory** - For test purposes. Not recommended for production.
+  -  **Database** - You can use JDBC/JPA to access the credentials.
+  -   **LDAP** - Lightweight Directory Access Protocol
+    - Open protocol for directory services and authentication
+
+Go to the ```application.properties``` and delete the user and password configured.
+
+Create this method in ```BasicAuthSecurityConfiguration.class```. This method is used to configure user credentials, roles and etc...
+
+```java
+@Configuration
+public class BasicAuthSecurityConfiguration {
+
+//same code
+
+@Bean
+public UserDetailsService userDetailService() {
+
+	var user = User.withUsername("userexample")
+		.password("{noop}1234")
+		.roles("USER")
+		.build();
+
+	var admin = User.withUsername("admin")
+		.password("{noop}1234")
+		.roles("USER")
+		.build();
+
+	return new InMemoryUserDetailsManager(user, admin);
+   }
+
+}
+```
+
+We have to put a ```{noop}``` in the password, because we will not use encryption in passwords
+
+Now, if we make a POST request in postman, using the configurations of user and password
+
+<br>
+
+<div align="center"><img src="img/credentialsmemory-w1487-h625.png" width=1487 height=625><br><sub>Storing User Credentials in Memory - (<a href='https://github.com/vitorstabile'>Work by Vitor Garcia</a>) </sub></div>
+
+<br>
+
+#### <a name="chapter5part10"></a>Chapter 5 - Part 10: Storing User Credentials using JDBC
