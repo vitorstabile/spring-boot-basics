@@ -63,6 +63,7 @@
     - [Chapter 5 - Part 8: Cross-Origin Resource Sharing - CORS](#chapter5part8)
     - [Chapter 5 - Part 9: Storing User Credentials in Memory](#chapter5part9)
     - [Chapter 5 - Part 10: Storing User Credentials using JDBC](#chapter5part10)
+	- [Chapter 5 - Part 11: Encoding vs Hashing vs Encryption](#chapter5part11)
 
 ## <a name="chapter1"></a>Chapter 1: Introducing Spring Boot
   
@@ -5139,4 +5140,6 @@ Roles
 <div align="center"><img src="img/newuserssecurity2-w553-h342.png" width=553 height=342><br><sub>User Stored in Security Schema - (<a href='https://github.com/vitorstabile'>Work by Vitor Garcia</a>) </sub></div>
 
 <br>
+
+#### <a name="chapter5part11"></a>Chapter 5 - Part 11: Encoding vs Hashing vs Encryption
 
