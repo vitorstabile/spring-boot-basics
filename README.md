@@ -64,6 +64,7 @@
     - [Chapter 5 - Part 9: Storing User Credentials in Memory](#chapter5part9)
     - [Chapter 5 - Part 10: Storing User Credentials using JDBC](#chapter5part10)
 	- [Chapter 5 - Part 11: Encoding vs Hashing vs Encryption](#chapter5part11)
+	- [Chapter 5 - Part 12: Storing BCrypt Encoded Passwords](#chapter5part12)
 
 ## <a name="chapter1"></a>Chapter 1: Introducing Spring Boot
   
@@ -5195,5 +5196,69 @@ Roles
 <br>
 
 <div align="center"><img src="img/encryption-w609-h489.png" width=609 height=489><br><sub>Encryption - (<a href='https://ico.org.uk/for-organisations/uk-gdpr-guidance-and-resources/security/encryption/what-types-of-encryption-are-there/'>Work by ICO.Info</a>) </sub></div>
+
+<br>
+
+#### <a name="chapter5part12"></a>Chapter 5 - Part 12: Storing BCrypt Encoded Passwords
+
+- Hashes like SHA-256 are no longer secure
+- Modern systems can perform billions of hash calculations a second
+   -  AND systems improve with time!
+- Recommended: Use adaptive one way functions with Work factor of 1 second
+  - One-way functions are basically functions, which work one way. You can use the hashing algorithm to generate a hash from the data, but you'll not be able to get the data from the hash, that is what is called one way function.
+  - It should take at least 1 second to verify a password on your system
+  - The thing is, systems are improving with time. And therefore, your algorithms should be adaptive. You should be able to configure something on the algorithm that increases the complexity and that increases the time it takes. Typically, whenever we talk about computer algorithms or things like that, we would want them to be fast. However, in the case of storing passwords, if the hashing is very, very fast, then somebody can do that hashing and try a brute force algorithm. And that's why you don't want your hashing algorithm to be too quick.
+  - Examples: bcrypt, scrypt, argon2, ..
+- PasswordEncoder - interface for performing one way transformation of a password
+  - (REMEMBER) Confusingly Named!
+  - BCryptPasswordEncoder
+  
+Let's store Passwords using the Encoder. Go in BasicAuthSecurityConfiguration.class
+
+
+```java
+
+@Configuration
+public class BasicAuthSecurityConfiguration {
+
+	@Bean
+    public UserDetailsService userDetailService(DataSource dataSource) {
+
+        var user = User.withUsername("userexample")
+                //.password("{noop}1234")
+                .password("dummy")
+                .passwordEncoder(str -> passwordEncoder().encode(str))
+                .roles("USER")
+                .build();
+
+        var admin = User.withUsername("admin")
+                //.password("{noop}1234")
+                .password("dummy")
+                .passwordEncoder(str -> passwordEncoder().encode(str))
+                .roles("USER")
+                .build();
+
+        var jdbcUserDetailsManager = new JdbcUserDetailsManager(dataSource);
+        jdbcUserDetailsManager.createUser(user);
+        jdbcUserDetailsManager.createUser(admin);
+
+        return jdbcUserDetailsManager;
+
+    }
+
+	@Bean
+    public BCryptPasswordEncoder passwordEncoder(){
+        return new BCryptPasswordEncoder();
+    }
+	
+}
+
+```
+
+Now, if we go to h2-console, we will see the password encrypted
+
+<br>
+
+<div align="center"><img src="img/encryptpass-w943-h432.png" width=943 height=432><br><sub>Passwords Encrypted - (<a href='https://github.com/vitorstabile'>Work by Vitor Garcia</a>) </sub></div>
 
 <br>
