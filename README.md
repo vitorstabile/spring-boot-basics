@@ -4989,3 +4989,154 @@ Now, if we make a POST request in postman, using the configurations of user and 
 <br>
 
 #### <a name="chapter5part10"></a>Chapter 5 - Part 10: Storing User Credentials using JDBC
+
+Now, let's put in our project, JDBC, JPA and H2 dependencies in our pom.xml to use to store our Credentials
+
+```xml
+<dependencies>
+		
+		<!-- other dependecies -->
+		
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jdbc</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		
+		<!-- other dependecies -->
+		
+		
+	</dependencies>
+```	
+
+Let's create a H2 config in the ```application.properties``` to the URL
+
+```
+# DATASOURCE 
+spring.datasource.driverClassName=org.h2.Driver
+spring.datasource.url=jdbc:h2:mem:testdb
+spring.datasource.username=sa
+spring.datasource.password=
+
+# H2 CLIENT 
+spring.h2.console.enabled=true
+spring.h2.console.path=/h2-console
+
+# JPA, SQL 
+spring.jpa.database-platform=org.hibernate.dialect.H2Dialect
+spring.jpa.defer-datasource-initialization=true
+spring.jpa.show-sql=true
+spring.jpa.properties.hibernate.format_sql=true
+```
+
+Enter in http://localhost:8080/h2-console and enter in connect
+
+If you look, the Spring Security by Default disable frames, so, you have the page like this
+
+<br>
+
+<div align="center"><img src="img/framesspringsecurity-w1135-h775.png" width=1135 height=775><br><sub>Frames DIsable by Deafult in Spring Security - (<a href='https://github.com/vitorstabile'>Work by Vitor Garcia</a>) </sub></div>
+
+<br>
+
+This is part of FilterChain, so, we have to Enable
+
+```java
+
+	@Bean
+    SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+
+        http.authorizeHttpRequests(auth -> {
+            auth.anyRequest().authenticated();
+        });
+        http.sessionManagement(
+                session -> session.sessionCreationPolicy(
+                        SessionCreationPolicy.STATELESS
+                )
+        );
+        http.httpBasic();
+        http.csrf().disable();
+
+        http.headers().frameOptions().sameOrigin();
+
+        return http.build();
+    }
+```
+
+Now, let's create a schema that will create Automatically a user schema to put User and Password
+
+The EmbeddedDatabaseType is H2
+The JDBC have a default schema, located in org.springframework.security.core.userdetails.jdbc.JdbcDaoImpl.DEFAULT_USER_SCHEMA_DDL_LOCATION
+
+
+```java
+	@Bean
+    public DataSource dataSource() {
+
+        return new EmbeddedDatabaseBuilder()
+                .setType(EmbeddedDatabaseType.H2)
+                .addScript(JdbcDaoImpl.DEFAULT_USER_SCHEMA_DDL_LOCATION)
+                .build();
+    }
+```
+
+Now, if we enter in the H2, we can see
+
+<br>
+
+<div align="center"><img src="img/userschemasecurity-w820-h462.png" width=820 height=462><br><sub>User Security Schemas - (<a href='https://github.com/vitorstabile'>Work by Vitor Garcia</a>) </sub></div>
+
+<br>
+
+Now, let's populate and configure to use the Database configuration
+
+The datasour will be injected in userDetailService
+
+```java
+
+	@Bean
+    public UserDetailsService userDetailService(DataSource dataSource) {
+
+        var user = User.withUsername("userexample")
+                .password("{noop}1234")
+                .roles("USER")
+                .build();
+
+        var admin = User.withUsername("admin")
+                .password("{noop}1234")
+                .roles("USER")
+                .build();
+
+        var jdbcUserDetailsManager = new JdbcUserDetailsManager(dataSource);
+        jdbcUserDetailsManager.createUser(user);
+        jdbcUserDetailsManager.createUser(admin);
+
+        return jdbcUserDetailsManager;
+
+    }
+```
+
+Passwords
+
+<br>
+
+<div align="center"><img src="img/newuserssecurity-w684-h373.png" width=684 height=373><br><sub>User Stored in Security Schema - (<a href='https://github.com/vitorstabile'>Work by Vitor Garcia</a>) </sub></div>
+
+<br>
+
+Roles
+
+<br>
+
+<div align="center"><img src="img/newuserssecurity2-w553-h342.png" width=553 height=342><br><sub>User Stored in Security Schema - (<a href='https://github.com/vitorstabile'>Work by Vitor Garcia</a>) </sub></div>
+
+<br>
+
