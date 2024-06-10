@@ -5143,3 +5143,57 @@ Roles
 
 #### <a name="chapter5part11"></a>Chapter 5 - Part 11: Encoding vs Hashing vs Encryption
 
+- **Encoding**: Transform data - one form to another
+  - Does NOT use a key or password
+  - Is reversible. 
+    - Once you have the encoded text, you can get the actual text back
+  - Typically NOT used for securing data
+  - Usecases: Compression, Streaming
+  -  Example: Base 64, Wav, MP3
+  - The goal of encoding is to transfer data efficiently or store data efficiently.
+  
+<br>
+
+<div align="center"><img src="img/encovshashvsencr-w642-h267.png" width=642 height=267><br><sub>Encoding - (<a href='https://medium.com/javarevisited/cryptography-primer-hashing-vs-encoding-vs-encryption-98a83f024199'>Work by Rohit Singh</a>) </sub></div>
+
+<br>
+  
+- **Hashing**: Convert data into a Hash (a String)
+  - One-way process
+    - So you cannot get the original data back from a hash. So you have a data, you use an algorithm to convert it into hash. You cannot get the actual data from the hash.
+  - NOT reversible
+    - You CANNOT get the original data back!
+  - Usecases: Validate integrity of data
+    - The use cases are to validate the integrity of data. What you can do is you can have the data and you can also have the hash of the data sent together. On the receiver side, they can get the data, hash it and check whether the computed hash matches the hash in the original message. By using this, you can be sure that the message is exactly as it was sent.
+  - Example: bcrypt, scrypt
+  
+  A typical use case for hashing is to store your passwords. You don't want to store the plain text passwords as they are. Why? Because if somebody is able to access your database, then they'll be able to get the plain text passwords. That's why you'd want to use some kind of hashing to store your passwords. So what we typically do is we would use a hashing algorithm to hash the password and store it in the database.
+
+	You can see that for Henry, even though the password is one, two, three, four, five, six, seven, eight, the stored value in the database is a hashed value, hd23dd23. Now, you might be wondering, how would authentication be done? What would happen when Henry tries to log in?
+
+	What would happen when Henry tries to log in is we would get the password and we would hash it.
+
+	So we would hash it, get the hash of it and we'll compare the hash with the hash which is stored in the database.
+
+	What we are doing is we are creating the hash key again and checking it against the stored password hash key.
+
+	If these match, then we allow Henry in.
+  
+<br>
+
+<div align="center"><img src="img/hashing-w632-h249.png" width=632 height=249><br><sub>Hashing - (<a href='https://upload.wikimedia.org/wikipedia/commons/5/5e/CPT-Hashing-Password-Login.svg'>Work by Wikipedia</a>) </sub></div>
+
+<br>
+  
+- **Encryption**: Encoding data using a key or password
+  - You need to key or password to decrypt
+    - Once you have the key or password text, you can get the actual data back
+  - Example: RSA
+  - The goal of encryption is to safeguard data, is to protect data.
+  
+  
+<br>
+
+<div align="center"><img src="img/encryption-w609-h489.png" width=609 height=489><br><sub>Encryption - (<a href='https://ico.org.uk/for-organisations/uk-gdpr-guidance-and-resources/security/encryption/what-types-of-encryption-are-there/'>Work by ICO.Info</a>) </sub></div>
+
+<br>
