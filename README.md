@@ -4692,7 +4692,7 @@ Let's imagine you will login in your bank account
 
 Let's make a test, using the same url to make a GET and a POST. We have this resource
 
-```
+```java
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
