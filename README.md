@@ -67,6 +67,7 @@
     - [Chapter 5 - Part 12: Storing BCrypt Encoded Passwords](#chapter5part12)
     - [Chapter 5 - Part 13: Json Web Token (JWT)](#chapter5part13)
 	- [Chapter 5 - Part 14: JWT Security Configuration](#chapter5part14)
+	- [Chapter 5 - Part 15: Understanding Spring Security Authentication](#chapter5part15)
 
 ## <a name="chapter1"></a>Chapter 1: Introducing Spring Boot
   
@@ -5802,3 +5803,25 @@ Now, if we take this token and try to create a Post in the resource /todos, is p
 <div align="center"><img src="img/resourcewithjwt-w1505-h831.png" width=1505 height=831><br><sub>Abble to call the Post - (<a href='https://github.com/vitorstabile'>Work by Vitor Garcia</a>) </sub></div>
 
 <br>
+
+#### <a name="chapter5part15"></a>Chapter 5 - Part 15: Understanding Spring Security Authentication
+
+- Authentication is done as part of the Spring Security Filter Chain!
+
+- 1: AuthenticationManager - Responsible for authentication
+  - Can interact with multiple authentication providers
+  
+- 2: AuthenticationProvider - Perform specific authentication type
+  - JwtAuthenticationProvider - JWT Authentication
+  
+- 3: UserDetailsService - Core interface to load user data
+
+- How is authentication result stored?
+  - SecurityContextHolder > SecurityContext > Authentication > GrantedAuthority
+
+<br>
+
+<div align="center"><img src="img/springsecflow-w497-h606.png" width=497 height=606><br><sub>Spring Security Authentication - (<a href='https://github.com/vitorstabile'>Work by Vitor Garcia</a>) </sub></div>
+
+<br>  
+  
