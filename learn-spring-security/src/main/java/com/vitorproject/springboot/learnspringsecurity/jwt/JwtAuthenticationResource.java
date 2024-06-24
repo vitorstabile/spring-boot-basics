@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.time.Instant;
 import java.util.stream.Collectors;
 
-@RestController
+//@RestController
 public class JwtAuthenticationResource {
 
     private JwtEncoder jwtEncoder;

@@ -68,6 +68,9 @@
     - [Chapter 5 - Part 13: Json Web Token (JWT)](#chapter5part13)
 	- [Chapter 5 - Part 14: JWT Security Configuration](#chapter5part14)
 	- [Chapter 5 - Part 15: Understanding Spring Security Authentication](#chapter5part15)
+	- [Chapter 5 - Part 16: Spring Security Authorization](#chapter5part16)
+	
+	
 
 ## <a name="chapter1"></a>Chapter 1: Introducing Spring Boot
   
@@ -5824,4 +5827,161 @@ Now, if we take this token and try to create a Post in the resource /todos, is p
 <div align="center"><img src="img/springsecflow-w497-h606.png" width=497 height=606><br><sub>Spring Security Authentication - (<a href='https://github.com/vitorstabile'>Work by Vitor Garcia</a>) </sub></div>
 
 <br>  
+
+#### <a name="chapter5part16"></a>Chapter 5 - Part 16: Spring Security Authorization
+
+
+- 1: Global Security: authorizeHttpRequests
+  - .requestMatchers("/users").hasRole("USER")
+    - hasRole, hasAuthority, hasAnyAuthority, isAuthenticated
+
+- 2: Method Security (@EnableMethodSecurity)
+  - @Pre and @Post Annotations
+    - @PreAuthorize("hasRole('USER') and #username == authentication.name")
+	- @PostAuthorize("returnObject.username == 'in28minutes'")
+	
+  - JSR-250 annotations
+    - @EnableMethodSecurity(jsr250Enabled = true)
+	- @RolesAllowed({"ADMIN", "USER"})
+	
+  - @Secured annotation
+    - @EnableMethodSecurity(securedEnabled = true)
+	- @Secured({"ADMIN", "USER"})
+	
+  - (REMEMBER) JWT: hasAuthority('SCOPE_ROLE_USER') Use
   
+Let's comment the JwtAuthenticationResource.class and JwtAuthenticationResource.Class
+
+In the global security, let's put this method .requestMatchers("/users").hasRole("USER"), telling that, in the request /users, we need the role USER or ADMIN
+
+```java
+
+@Configuration
+@EnableMethodSecurity
+public class BasicAuthSecurityConfiguration {
+
+    @Bean
+    SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+
+        http.authorizeHttpRequests(auth -> {
+            auth
+                    .requestMatchers("/users").hasRole("USER")
+                    .requestMatchers("/users").hasRole("ADMIN")
+                    .anyRequest().authenticated();
+        });
+        http.sessionManagement(
+                session -> session.sessionCreationPolicy(
+                        SessionCreationPolicy.STATELESS
+                )
+        );
+        http.httpBasic();
+        http.csrf().disable();
+
+        http.headers().frameOptions().sameOrigin();
+
+        return http.build();
+    }
+	
+// same code
+
+```
+
+Now, let's create a new resource and put the annotations @EnableMethodSecurity in BasicAuthSecurityConfiguration
+
+```java
+
+@Configuration
+@EnableMethodSecurity(jsr250Enabled = true, securedEnabled = true)
+public class BasicAuthSecurityConfiguration {
+
+    @Bean
+    SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+
+        http.authorizeHttpRequests(auth -> {
+            auth
+                    .anyRequest().authenticated();
+        });
+        http.sessionManagement(
+                session -> session.sessionCreationPolicy(
+                        SessionCreationPolicy.STATELESS
+                )
+        );
+        http.httpBasic();
+        http.csrf().disable();
+
+        http.headers().frameOptions().sameOrigin();
+
+        return http.build();
+    }
+	
+// same code
+
+```
+
+Now, let's make the pre authorization. If the username don't match the authentication user (userexample) e will receive a 403
+
+```java
+
+	private static final List<Todo> TODOS_LIST = List.of(
+            new Todo("userexample", "HR"),
+            new Todo("Mike", "IT"));
+
+	@GetMapping("/users/{username}/todos")
+    @PreAuthorize("hasRole('USER') and #username == authentication.name")
+    public Todo retrieveTodosForSpecificUser(@PathVariable String username) {
+        return TODOS_LIST.get(0);
+    }
+	
+```
+
+If we make the GET request to http://localhost:8080/users/:username/todos with userexample, we will receive a 200
+
+Now, let's make the post authorization. If the username don't match the authentication user (userexample) e will receive a 403
+
+```java
+
+	private static final List<Todo> TODOS_LIST = List.of(
+            new Todo("userexample", "HR"),
+            new Todo("Mike", "IT"));
+
+	@GetMapping("/users/{username}/todos")
+    @PostAuthorize("returnObject.username == 'userexample'")
+    public Todo retrieveTodosForSpecificUser(@PathVariable String username) {
+        return TODOS_LIST.get(0);
+    }
+	
+```
+
+If we make the GET request to http://localhost:8080/users/:username/todos with userexample, we will receive a 200
+
+We can add a specif role to a resource @RolesAllowed
+
+```java
+
+	private static final List<Todo> TODOS_LIST = List.of(
+            new Todo("userexample", "HR"),
+            new Todo("Mike", "IT"));
+
+	@GetMapping("/users/{username}/todos")
+    @RolesAllowed({"ADMIN", "USER"})
+    public Todo retrieveTodosForSpecificUser(@PathVariable String username) {
+        return TODOS_LIST.get(0);
+    }
+	
+```
+
+We can add a specif role to a resource @secure. The name of the role becomes ROLE_NAMEOFTHEROLE
+
+```java
+
+	private static final List<Todo> TODOS_LIST = List.of(
+            new Todo("userexample", "HR"),
+            new Todo("Mike", "IT"));
+
+	@GetMapping("/users/{username}/todos")
+    @Secured({"ROLE_ADMIN", "ROLE_USER"})
+    public Todo retrieveTodosForSpecificUser(@PathVariable String username) {
+        return TODOS_LIST.get(0);
+    }
+	
+```
