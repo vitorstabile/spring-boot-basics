@@ -69,6 +69,7 @@
 	- [Chapter 5 - Part 14: JWT Security Configuration](#chapter5part14)
 	- [Chapter 5 - Part 15: Understanding Spring Security Authentication](#chapter5part15)
 	- [Chapter 5 - Part 16: Spring Security Authorization](#chapter5part16)
+	- [Chapter 5 - Part 17: OAuth](#chapter5part17)
 	
 	
 
@@ -5985,3 +5986,96 @@ We can add a specif role to a resource @secure. The name of the role becomes ROL
     }
 	
 ```
+
+#### <a name="chapter5part17"></a>Chapter 5 - Part 17: OAuth
+
+- How can you give an application access to files present on your google drive?
+  - You don't want to provide your credentials (NOT SECURE)
+  
+- OAuth: Industry-standard protocol for authorization
+  - Also supports authentication now!
+  
+- Let's say you want to provide access to your Google Drive files to Your management application!
+  - Important Concepts:
+    - Resource owner: You (Person owning the google drive files)
+	- Client application: Todo management application
+	- Resource server: Contains the resources that are being accessed - Google Drive
+	- Authorization server: Google OAuth Server
+
+Go to [Spring Initializr](https://start.spring.io/) and select the following:
+
+- **Project**
+   - Maven Project
+- **Language**
+   - Java
+- **Spring Boot Version**
+   - For Java Version 8 -> Spring Boot 2.x
+   - For Java Version 17 -> Spring Boot 3.x
+- **Packaging**
+   - Jar
+- **Java**
+   - For Spring Boot 2.x -> Java Version 8
+   - For Spring Boot 3.x -> Java Version 17,21
+- **Dependencies**
+   - Spring Web -> To Construct Rest APIs
+   - OAuth2 Client -> Spring Boot integration for Spring Security's OAuth2/OpenID Connect client features.
+   - Spring Boot DevTools -> Provides fast application restarts, LiveReload, and configurations for enhanced development experience.
+   
+Run the project. We will have the login page when we access http://localhost:8080/.
+
+What we want to do is we don't want to use this login page we want to use OAuth.
+
+We'd want to use the login with Google feature.
+
+How can we do that?
+
+The default configuration for Spring Security is present in this specific file, spring Boot web security configuration.
+
+If we go to the class ```SpringBootWebSecurityConfiguration.class``` we will see a method called ```SecurityFilterChain``` in org.springframework.boot.autoconfigure.security.servlet
+
+Create a class ```OAuthSecurityConfiguration``` and copy this code
+
+```java
+@Configuration
+public class OAuthSecurityConfiguration {
+
+    @Bean
+    @Order(SecurityProperties.BASIC_AUTH_ORDER)
+    SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
+        http.authorizeHttpRequests((requests) -> {
+            ((AuthorizeHttpRequestsConfigurer.AuthorizedUrl)requests.anyRequest()).authenticated();
+        });
+        //http.formLogin(Customizer.withDefaults());
+        //http.httpBasic(Customizer.withDefaults());
+        http.oauth2ResourceServer(Customizer.withDefaults());
+        return (SecurityFilterChain)http.build();
+    }
+
+}
+```
+
+Now, Go to [Google API Console](https://console.developers.google.com/project)
+
+Go in Create Credentials and after go to OAuth client ID
+
+Configure the support email, and chose the scopes
+
+Afterm go to OAuth client ID, and put the Authorized redirects URIs (In this case, the URI of your application) -> http://localhost:8080/login/oauth2/code/Google
+
+Go in Create and this will generate a client_id and client secret
+
+Put the client_id and client_secret in application.properties
+
+```
+spring.security.oauth2.client.registration.google.client-id=YOUR_CLIENT_ID
+spring.security.oauth2.client.registration.google.client-secret=YOUR_SECRET
+```
+
+Now, if you go to http://localhost:8080/login, this will open to you a form to autenticate with you google account
+
+<br>
+
+<div align="center"><img src="img/oauth-w521-h236.png" width=521 height=236><br><sub>OAuth Login - (<a href='https://github.com/vitorstabile'>Work by Vitor Garcia</a>) </sub></div>
+
+<br>  
+
