@@ -66,6 +66,7 @@
     - [Chapter 5 - Part 11: Encoding vs Hashing vs Encryption](#chapter5part11)
     - [Chapter 5 - Part 12: Storing BCrypt Encoded Passwords](#chapter5part12)
     - [Chapter 5 - Part 13: Json Web Token (JWT)](#chapter5part13)
+	- [Chapter 5 - Part 14: JWT Security Configuration](#chapter5part14)
 
 ## <a name="chapter1"></a>Chapter 1: Introducing Spring Boot
   
@@ -5388,3 +5389,416 @@ There are two types of encryption
 - 3: JWT is verified (in the server)
   - Needs Decoding
   - RSA key pair (Public Key)
+
+#### <a name="chapter5part14"></a>Chapter 5 - Part 14: JWT Security Configuration
+
+- JWT Authentication using Spring Boot’s OAuth2 Resource Server
+
+- 1: Create Key Pair
+  - We will use java.security.KeyPairGenerator
+  - You can use openssl as well
+  
+- 2: Create RSA Key object using Key Pair
+  - com.nimbusds.jose.jwk.RSAKey
+  
+- 3: Create JWKSource (JSON Web Key source)
+  - Create JWKSet (a new JSON Web Key set) with the RSA Key
+  - Create JWKSource using the JWKSet
+  
+- 4: Use RSA Public Key for Decoding
+  - NimbusJwtDecoder.withPublicKey(rsaKey().toRSAPublicKey()).build()
+
+- 5: Use JWKSource for Encoding
+  - return new NimbusJwtEncoder(jwkSource());
+  - We will use this later in the JWT Resource
+
+Put this dependency in you pom.xml file
+
+```xml
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
+    <version>3.3.1</version>
+</dependency>
+```
+
+Copy the Class BasicAuthSecurityConfiguration.class and rename to JwtSecurityConfiguration.Class
+
+Move the class JwtSecurityConfiguration.Class to a new folder called jwt
+
+Comment the configuration annotation in BasicAuthSecurityConfiguration.class to disable Basic Auth
+
+```java
+
+//@Configuration
+public class BasicAuthSecurityConfiguration {
+
+// code
+
+}
+
+```
+
+Now, add this method in the filter chain Security (http.oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt);)
+
+```java
+@Configuration
+public class JwtSecurityConfiguration {
+
+    @Bean
+    SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+
+        http.authorizeHttpRequests(auth -> {
+            auth.anyRequest().authenticated();
+        });
+        http.sessionManagement(
+                session -> session.sessionCreationPolicy(
+                        SessionCreationPolicy.STATELESS
+                )
+        );
+        http.httpBasic();
+        http.csrf().disable();
+
+        http.headers().frameOptions().sameOrigin();
+
+        http.oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt);
+
+        return http.build();
+    }
+
+// same code	
+	
+}
+```
+
+If we try to initialize the application we will receive a error
+
+```
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+Method securityFilterChain in com.vitorproject.springboot.learnspringsecurity.jwt.JwtSecurityConfiguration required a bean of type 'org.springframework.security.oauth2.jwt.JwtDecoder' that could not be found.
+
+
+Action:
+
+Consider defining a bean of type 'org.springframework.security.oauth2.jwt.JwtDecoder' in your configuration.
+```
+
+We need to create a decoder, but this is the step 4.
+
+First, we need to create a KeyPair generator method. We will use the RSA Algorithm
+
+```java
+	@Bean
+    public KeyPair keyPair() {
+        try {
+            var keyPairGenerator = KeyPairGenerator.getInstance("RSA");
+            keyPairGenerator.initialize(2048);
+            return keyPairGenerator.generateKeyPair();
+        } catch (Exception ex) {
+            throw new RuntimeException();
+        }
+
+   }
+````
+
+Now, we need to create a RSAKey using the key Pair
+
+```java
+	@Bean
+	public RSAKey rsaKey(KeyPair keyPair) {
+		
+		return new RSAKey
+				.Builder((RSAPublicKey)keyPair.getPublic())
+				.privateKey(keyPair.getPrivate())
+				.keyID(UUID.randomUUID().toString())
+				.build();
+	}
+```
+
+The next thing is to create something called a JWKSource.
+
+This is a JSON Web Key source.
+
+Typically you can create a JSON set with multiple keys.
+
+What we'll do is we'll create a JWK set with just one key, which is the RSA key.
+
+And once we have the JWKSet, we will create JWKSource using the JWKSet.
+
+```java
+	@Bean
+	public JWKSource<SecurityContext> jwkSource(RSAKey rsaKey) {
+		var jwkSet = new JWKSet(rsaKey);
+		
+		return (jwkSelector, context) ->  jwkSelector.select(jwkSet);
+		
+	}
+
+```
+
+The next thing is to create the RSA public key for decoding and we'll be using the Nimbus framework.
+
+```java
+	@Bean
+	public JwtDecoder jwtDecoder(RSAKey rsaKey) throws JOSEException {
+		return NimbusJwtDecoder
+				.withPublicKey(rsaKey.toRSAPublicKey())
+				.build();
+		
+	}
+```
+
+Our end goal was to configure a decoder for the JWT token.
+
+What we have done in the last step is focus on the verification of JWT.
+
+Once a JWT is sent to the OAuth resource server, how should it handle it?
+
+It should decode it and check if the JWT token is valid.
+
+That's what we have configured.
+
+That's exactly what we have configured in the last step.
+
+But before we will be able to decode a JWT, we need to set up a JWT.
+
+We need to encode it, and we would need to have a resource which can create the JWT for us.
+
+```java
+	@Bean
+    public JwtEncoder jwtEncoder(JWKSource<SecurityContext> jwkSource) {
+        return new NimbusJwtEncoder(jwkSource);
+    }
+```
+
+Now, the code of JwtSecurityConfiguration.class
+
+```java
+@Configuration
+public class JwtSecurityConfiguration {
+
+    @Bean
+    SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+
+        http.authorizeHttpRequests(auth -> {
+            auth.anyRequest().authenticated();
+        });
+        http.sessionManagement(
+                session -> session.sessionCreationPolicy(
+                        SessionCreationPolicy.STATELESS
+                )
+        );
+        http.httpBasic();
+        http.csrf().disable();
+
+        http.headers().frameOptions().sameOrigin();
+
+        http.oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt);
+
+        return http.build();
+    }
+
+    @Bean
+    public KeyPair keyPair() {
+        try {
+            var keyPairGenerator = KeyPairGenerator.getInstance("RSA");
+            keyPairGenerator.initialize(2048);
+            return keyPairGenerator.generateKeyPair();
+        } catch (Exception ex) {
+            throw new RuntimeException();
+        }
+
+   }
+
+    @Bean
+    public RSAKey rsaKey(KeyPair keyPair) {
+
+        return new RSAKey
+                .Builder((RSAPublicKey)keyPair.getPublic())
+                .privateKey(keyPair.getPrivate())
+                .keyID(UUID.randomUUID().toString())
+                .build();
+    }
+
+    @Bean
+    public JWKSource<SecurityContext> jwkSource(RSAKey rsaKey) {
+        var jwkSet = new JWKSet(rsaKey);
+
+        return (jwkSelector, context) ->  jwkSelector.select(jwkSet);
+
+    }
+
+    @Bean
+    public JwtDecoder jwtDecoder(RSAKey rsaKey) throws JOSEException {
+        return NimbusJwtDecoder
+                .withPublicKey(rsaKey.toRSAPublicKey())
+                .build();
+
+    }
+
+    @Bean
+    public JwtEncoder jwtEncoder(JWKSource<SecurityContext> jwkSource) {
+        return new NimbusJwtEncoder(jwkSource);
+    }
+
+    @Bean
+    public WebMvcConfigurer corsConfigurer() {
+        return new WebMvcConfigurer() {
+            public void addCorsMappings(CorsRegistry registry) {
+                registry.addMapping("/**")
+                        .allowedMethods("*")
+                        .allowedOrigins("http://localhost:3000");
+
+            }
+        };
+    }
+
+    @Bean
+    public UserDetailsService userDetailService(DataSource dataSource) {
+
+        var user = User.withUsername("userexample")
+                //.password("{noop}1234")
+                .password("dummy")
+                .passwordEncoder(str -> passwordEncoder().encode(str))
+                .roles("USER")
+                .build();
+
+        var admin = User.withUsername("admin")
+                //.password("{noop}1234")
+                .password("dummy")
+                .passwordEncoder(str -> passwordEncoder().encode(str))
+                .roles("USER")
+                .build();
+
+        var jdbcUserDetailsManager = new JdbcUserDetailsManager(dataSource);
+        jdbcUserDetailsManager.createUser(user);
+        jdbcUserDetailsManager.createUser(admin);
+
+        return jdbcUserDetailsManager;
+
+    }
+
+    @Bean
+    public DataSource dataSource() {
+
+        return new EmbeddedDatabaseBuilder()
+                .setType(EmbeddedDatabaseType.H2)
+                .addScript(JdbcDaoImpl.DEFAULT_USER_SCHEMA_DDL_LOCATION)
+                .build();
+    }
+
+    @Bean
+    public BCryptPasswordEncoder passwordEncoder(){
+        return new BCryptPasswordEncoder();
+    }
+}
+```
+
+How can I create a JWT?
+
+That's what we'll be focusing on, starting this step.
+
+We would want to create a JWT resource to create a JWT token.
+
+When a user wants to talk to the REST API, he would need to create a JWT token by sending a basic authentication request with username and password to the JWT resource.
+
+The response from the JWT resource will be a JWT token.
+
+Let's create a class JwtAuthenticationResource.class
+
+```java
+@RestController
+public class JwtAuthenticationResource {
+
+    @PostMapping("/authenticate")
+    public Authentication authenticate(Authentication authentication) {
+        return authentication;
+    }
+
+}
+```
+
+Now, if we make a Post Request to this resource, we will receive the details of the user "dummy"
+
+<br>
+
+<div align="center"><img src="img/jwtdecoded-w1483-h925.png" width=1483 height=925><br><sub>JWT Decoded - (<a href='https://github.com/vitorstabile'>Work by Vitor Garcia</a>) </sub></div>
+
+<br>
+
+Now, let's modify this resource and create the JWT encoder to encode the jwt of this User
+
+```java
+@RestController
+public class JwtAuthenticationResource {
+
+    private JwtEncoder jwtEncoder;
+
+    public JwtAuthenticationResource(JwtEncoder jwtEncoder) {
+        this.jwtEncoder = jwtEncoder;
+    }
+
+    @PostMapping("/authenticate")
+    public JwtRespose authenticate(Authentication authentication) {
+        return new JwtRespose(createToken(authentication));
+    }
+
+    private String createToken(Authentication authentication) {
+        var claims = JwtClaimsSet.builder()
+                .issuer("self")
+                .issuedAt(Instant.now())
+                .expiresAt(Instant.now().plusSeconds(60 * 30))
+                .subject(authentication.getName())
+                .claim("scope", createScope(authentication))
+                .build();
+
+        return jwtEncoder.encode(JwtEncoderParameters.from(claims))
+                .getTokenValue();
+    }
+
+    private String createScope(Authentication authentication) {
+        return authentication.getAuthorities().stream()
+                .map(a -> a.getAuthority())
+                .collect(Collectors.joining(" "));
+    }
+
+}
+
+record JwtRespose(String token) {}
+```
+
+Now, let's make a request with to see if the we receive the token
+
+<br>
+
+<div align="center"><img src="img/jwttokenreturn-w1505-h661.png" width=1505 height=661><br><sub>JWT Token - (<a href='https://github.com/vitorstabile'>Work by Vitor Garcia</a>) </sub></div>
+
+<br>
+
+If we decode this token
+
+```json
+{
+    "token": "eyJraWQiOiI0ZTM1NDg1Yi02YWI5LTQzMWEtODUyMS0yZGYzNmE1ODdmZTciLCJhbGciOiJSUzI1NiJ9.eyJpc3MiOiJzZWxmIiwic3ViIjoidXNlcmV4YW1wbGUiLCJleHAiOjE3MTkyNDk4MjIsImlhdCI6MTcxOTI0ODAyMiwic2NvcGUiOiJST0xFX1VTRVIifQ.ap-N9Y648-aoG64TgK3y8thjHIpewlt8DdpLaFTUVh2oxTVg01X9qTVZ42BWrt7Ot1oT_71F7i3eh_1mjFM9hWt4Hyu2ceKE1c6zuyKqdbDNEa-QqZGTl-fwGKLDJ6yS-eN6_KfH-KCFCIJ6K7-fGHZqkd_-zV0B4UxVMjCRVMyMQfGl_bYxw-8chDl_kmcpqFz0RKj5Dq_1jUwTLMwnIxvGUfdWN32GTN4yddXHIZcudxEfJdJuYwbZ89ool_5dGULuTIbnBxlxlwuu6RjUTUhYAbSPCmv3B6EdhGkiZewLhSh9X-EVqM0qbUnAez8MSnHzOCUxTW4dNttJrJB1lw"
+}
+```
+
+<br>
+
+<div align="center"><img src="img/decodatejwt-w1505-h831.png" width=1505 height=831><br><sub>Decoded JWT Token - (<a href='https://github.com/vitorstabile'>Work by Vitor Garcia</a>) </sub></div>
+
+<br>
+
+Now, if we take this token and try to create a Post in the resource /todos, is possible
+
+
+<br>
+
+<div align="center"><img src="img/resourcewithjwt-w1505-h831.png" width=1505 height=831><br><sub>Abble to call the Post - (<a href='https://github.com/vitorstabile'>Work by Vitor Garcia</a>) </sub></div>
+
+<br>
