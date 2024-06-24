@@ -65,6 +65,7 @@
     - [Chapter 5 - Part 10: Storing User Credentials using JDBC](#chapter5part10)
     - [Chapter 5 - Part 11: Encoding vs Hashing vs Encryption](#chapter5part11)
     - [Chapter 5 - Part 12: Storing BCrypt Encoded Passwords](#chapter5part12)
+    - [Chapter 5 - Part 13: Json Web Token (JWT)](#chapter5part13)
 
 ## <a name="chapter1"></a>Chapter 1: Introducing Spring Boot
   
@@ -5262,3 +5263,128 @@ Now, if we go to h2-console, we will see the password encrypted
 <div align="center"><img src="img/encryptpass-w943-h432.png" width=943 height=432><br><sub>Passwords Encrypted - (<a href='https://github.com/vitorstabile'>Work by Vitor Garcia</a>) </sub></div>
 
 <br>
+
+#### <a name="chapter5part13"></a>Chapter 5 - Part 13: Json Web Token (JWT)
+
+- **Basic Authentication**
+  - Don't have a expiration time
+  - Don't have details about the user - What kind of authorization this user have
+  - Can be easily decoded
+    
+- **How about a custom token system?**
+  - Custom Structure
+  - Possible Security Flaws
+  - Service Provider & Service Consumer should understand
+ 
+- **JWT (Json Web Token)**
+  - Open, industry standard for representing claims securely between two parties
+  - Can Contain User Details and Authorizations
+ 
+- **What does a JWT contain?**
+
+<br>
+
+<div align="center"><img src="img/jwtexample-w1304-h621.png" width=1304 height=621><br><sub>JWT Encoded Example - (<a href='https://github.com/vitorstabile'>Work by Vitor Garcia</a>) </sub></div>
+
+<br>
+
+```json
+    eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
+```
+  
+- **Header**
+  - Type: JWT
+  - Hashing Algorithm: HS512
+
+```json
+{
+  "alg": "HS256",
+  "typ": "JWT"
+}
+```
+
+- **Payload**
+  - **Standard Attributes**
+    - **iss**: The issuer
+    - **sub**: The subject
+    - **aud**: The audience
+    - **exp**: When does token expire?
+    - **iat**: When was token issued?
+
+  - **Custom Attributes**
+    - **youratt1**: Your custom attribute 1
+     
+```json
+{
+  "sub": "1234567890",
+  "name": "John Doe",
+  "iat": 1516239022
+}
+```
+
+- **Signature**
+  - Includes a Secret
+ 
+```json
+HMACSHA256(
+  base64UrlEncode(header) + "." +
+  base64UrlEncode(payload),
+  your-256-bit-secret)
+```
+
+In JWT we can make use of jeys to encrypt and decrypt
+
+There are two types of encryption
+
+**Symmetric Key Encryption**
+
+<br>
+
+<div align="center"><img src="img/symmetricencryption-w1368-h682.png" width=1368 height=682><br><sub>Symmetric Encryption - (<a href='https://en.wikipedia.org/wiki/Symmetric-key_algorithm'>Work by Wikipedia</a>) </sub></div>
+
+<br>
+
+- Symmetric encryption algorithms use the same key for encryption and decryption
+- Key Factor 1: Choose the right encryption algorithm
+- Key Factor 2: How do we secure the encryption key?
+- Key Factor 3: How do we share the encryption key?
+
+**Asymmetric Key Encryption**
+
+<br>
+
+<div align="center"><img src="img/asymmetricencryption-w1201-h675.png" width=1201 height=675><br><sub>Asymmetric Encryption - (<a href='https://www.linkedin.com/pulse/using-asymmetric-keys-baha-abu-shaqra-phd-dti-uottawa--khtjf'>Work by Baha Abu-Shaqra</a>) </sub></div>
+
+<br>
+
+- **Two Keys** : Public Key and Private Key
+- Also called **Public Key Cyptography**
+- Encrypt data with Public Key and decrypt with Private Key
+- Share Public Key with everybody and keep the Private Key with you(YEAH, ITS PRIVATE!)
+- No crazy questions:
+  - Will somebody not figure out private key using the public key?
+  - The thing is, there are very, very powerful algorithms that are used to create these public and private keys. Even if you have a public key, you will not be able to generate a corresponding private key easily.
+- Best Practice: Use Asymmetric Keys
+
+**Understanding High Level JWT Flow**
+
+<br>
+
+<div align="center"><img src="img/jwtflow-w830-h110.png" width=830 height=110><br><sub>JWT Flow - (<a href='https://github.com/vitorstabile'>Work by Vitor Garcia</a>) </sub></div>
+
+<br>
+
+- 1: Create a JWT
+  - Needs Encoding
+    - 1: User credentials
+    - 2: User data (payload)
+    - 3: RSA key pair
+
+- 2: Send JWT as part of request header
+  - Authorization Header
+  - Bearer Token
+  - Authorization: Bearer ${JWT_TOKEN}
+ 
+- 3: JWT is verified (in the server)
+  - Needs Decoding
+  - RSA key pair (Public Key)
