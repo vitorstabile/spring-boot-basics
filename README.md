@@ -6071,7 +6071,7 @@ spring.security.oauth2.client.registration.google.client-id=YOUR_CLIENT_ID
 spring.security.oauth2.client.registration.google.client-secret=YOUR_SECRET
 ```
 
-Now, if you go to http://localhost:8080/login, this will open to you a form to autenticate with you google account
+Now, if you go to http://localhost:8080/login, this will open to you a form to autenticate with you google account.
 
 <br>
 
